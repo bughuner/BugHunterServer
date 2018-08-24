@@ -76,6 +76,7 @@ public class BugController {
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
     public @ResponseBody
     ResultMessage submitBug(@RequestParam(name = "screenshot", required = false) MultipartFile file, @RequestParam(name = "bug") String jsonStr) {
+
         String screenshotName = Constants.SCREENSHOT_NO_EXIST;
         if (file != null && !file.isEmpty()) {
             try {
