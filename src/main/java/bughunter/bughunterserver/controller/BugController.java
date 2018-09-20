@@ -73,6 +73,8 @@ public class BugController {
         return ResultMessageFactory.getResultMessage(bugBaseInfoList);
     }
 
+
+    //有截图会出错
     @RequestMapping(value = "/submit", method = RequestMethod.POST)
     public @ResponseBody
     ResultMessage submitBug(@RequestParam(name = "screenshot", required = false) MultipartFile file, @RequestParam(name = "bug") String jsonStr) {
@@ -85,8 +87,8 @@ public class BugController {
                     logoSaveFile.mkdirs();
                 }
                 screenshotName = file.getOriginalFilename();
-                String suffix = file.getOriginalFilename().substring
-                        (file.getOriginalFilename().lastIndexOf("."));
+//                String suffix = file.getOriginalFilename().substring
+//                        (file.getOriginalFilename().lastIndexOf("."));
                 String screenshotFileName = Constants.SCREENSHOT_BASE_URL + File.separator + screenshotName;
                 File screenshotFile = new File(screenshotFileName);
                 file.transferTo(screenshotFile);
