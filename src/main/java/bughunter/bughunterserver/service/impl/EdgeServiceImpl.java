@@ -126,7 +126,7 @@ public class EdgeServiceImpl implements EdgeService {
 
     @Override
     public Edge getEdgeBySourceNodeAndTargetNodeAndCallbacksAndAppkey(String sourceNode, String targetNode, String callbacks, String appKey) {
-        return edgeDao.findBySourceNodeAndTargetNodeAndCallbacksAndAppKey(sourceNode, targetNode, callbacks, appKey);
+        return edgeDao.findBySourceNodeAndTargetNodeAndEventHandlersAndAppKey(sourceNode, targetNode, callbacks, appKey);
     }
 
     @Override

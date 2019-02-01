@@ -17,9 +17,11 @@ public class EdgeVOWrapper extends BaseWrapper<EdgeVO, Edge> {
         edgeVO.setId(edge.getId());
         edgeVO.setSourceNode(edge.getSourceNode());
         edgeVO.setTargetNode(edge.getTargetNode());
-        edgeVO.setCallbacks(edge.getCallbacks());
+        edgeVO.setEventHandlers(edge.getEventHandlers());
         edgeVO.setIsCovered(edge.getIsCovered());
         edgeVO.setAppKey(edge.getAppKey());
+        edgeVO.setEventType(edge.getEventType());
+        edgeVO.setRepeat(edge.getRepeat());
         return edgeVO;
     }
 
@@ -28,9 +30,11 @@ public class EdgeVOWrapper extends BaseWrapper<EdgeVO, Edge> {
         Edge edge = new Edge();
         edge.setSourceNode(data.getSourceNode());
         edge.setTargetNode(data.getTargetNode());
-        edge.setCallbacks(data.getCallbacks());
+        edge.setEventHandlers(data.getEventHandlers());
+        edge.setEventType(data.getEventType());
         edge.setIsCovered(data.getIsCovered());
         edge.setAppKey(data.getAppKey());
+        edge.setRepeat(data.getRepeat());
         return edge;
     }
 }

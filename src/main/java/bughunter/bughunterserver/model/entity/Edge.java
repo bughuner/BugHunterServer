@@ -22,8 +22,14 @@ public class Edge {
     @Column(name = "target_node")
     private String targetNode;
 
-    @Column(name = "callbacks")
-    private String callbacks;
+    @Column(name = "eventHandlers")
+    private String eventHandlers;
+
+    @Column(name = "event_type")
+    private String eventType;
+
+    @Column(name = "repeat")
+    private Long repeat;
 
     private static int weight = 1;
     /**
@@ -60,12 +66,12 @@ public class Edge {
         this.targetNode = targetNode;
     }
 
-    public String getCallbacks() {
-        return callbacks;
+    public String getEventHandlers() {
+        return eventHandlers;
     }
 
-    public void setCallbacks(String callbacks) {
-        this.callbacks = callbacks;
+    public void setEventHandlers(String eventHandlers) {
+        this.eventHandlers = eventHandlers;
     }
 
     public Integer getIsCovered() {
@@ -90,5 +96,21 @@ public class Edge {
 
     public static void setWeight(int weight) {
         Edge.weight = weight;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
+    public Long getRepeat() {
+        return repeat;
+    }
+
+    public void setRepeat(Long repeat) {
+        this.repeat = repeat;
     }
 }

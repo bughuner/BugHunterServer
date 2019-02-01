@@ -1,7 +1,6 @@
 package bughunter.bughunterserver.dao;
 
 import bughunter.bughunterserver.model.entity.Edge;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import javax.transaction.Transactional;
@@ -22,7 +21,7 @@ public interface EdgeDao extends CrudRepository<Edge, Long> {
 
     List<Edge> findBySourceNodeAndTargetNode(String sourceWindow, String targetWindow);
 
-    @Query("SELECT e FROM edge e WHERE e.sourceNode = :sourceNode and e.targetNode = :targetNode " +
-            "and e.callbacks = :callbacks and e.appKey = :appKey")
-    Edge findBySourceNodeAndTargetNodeAndCallbacksAndAppKey(String sourceNode, String targetNode, String callbacks, String appKey);
+//    @Query("SELECT e FROM edge e WHERE e.sourceNode = :sourceNode and e.targetNode = :targetNode " +
+//            "and e.callbacks = :callbacks and e.appKey = :appKey")
+    Edge findBySourceNodeAndTargetNodeAndEventHandlersAndAppKey(String sourceNode, String targetNode, String eventHandlers, String appKey);
 }

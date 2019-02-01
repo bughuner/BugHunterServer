@@ -12,16 +12,21 @@ public class EdgeDTO {
 
     private String targetNode;
 
-    private String callbacks;
+    private String eventHandlers;
+
+    private String eventType;
+
+    private Long repeat;
+
+    private Integer isCovered;
+
+    private String appKey;
 
     private static int weight = 1;
     /**
      * 0:未覆盖
      * 1:覆盖
      */
-    private Integer isCovered;
-
-    private String appKey;
 
     public Long getId() {
         return id;
@@ -47,14 +52,6 @@ public class EdgeDTO {
         this.targetNode = targetNode;
     }
 
-    public String getCallbacks() {
-        return callbacks;
-    }
-
-    public void setCallbacks(String callbacks) {
-        this.callbacks = callbacks;
-    }
-
     public static int getWeight() {
         return weight;
     }
@@ -77,5 +74,29 @@ public class EdgeDTO {
 
     public void setAppKey(String appKey) {
         this.appKey = appKey;
+    }
+
+    public String getEventHandlers() {
+        return eventHandlers;
+    }
+
+    public void setEventHandlers(String eventHandlers) {
+        this.eventHandlers = eventHandlers;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
+    public Long getRepeat() {
+        return repeat;
+    }
+
+    public void setRepeat(Long repeat) {
+        this.repeat = repeat;
     }
 }

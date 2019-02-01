@@ -31,7 +31,7 @@ public class EdgeController {
     @Autowired
     private EdgeService edgeService;
 
-    @RequestMapping(value = "/pathExtract", method = RequestMethod.GET)
+    @RequestMapping(value = "/WTG", method = RequestMethod.GET)
     public String getNodeCoverage() throws Exception {
         String uncoveredPath = "/Users/sean/Desktop/result/666locdemo/pathExtract.txt";
         File uncoveredfile = new File(uncoveredPath);
@@ -44,7 +44,7 @@ public class EdgeController {
 
         List<EdgeVO> edgeVOs = new ArrayList<>();
         while (temp1 != null) {
-            if (temp1.equals("uncovered:")) {
+            if (temp1.equals("edge:")) {
                 EdgeVO edgeVO = new EdgeVO();
                 edgeVO.setIsCovered(0);
 
@@ -54,9 +54,9 @@ public class EdgeController {
                 temp1 = br1.readLine();
                 edgeVO.setTargetNode(temp1);
 
-                edgeVO.setCallbacks(br1.readLine());
+                edgeVO.setEventHandlers(br1.readLine());
                 edgeVO.setAppKey("666locdemo");
-                if (!edgeVO.getCallbacks().equals("[]"))
+                if (!edgeVO.getEventHandlers().equals("[]"))
                     edgeVOs.add(edgeVO);
 
             }
@@ -109,7 +109,7 @@ public class EdgeController {
             edgeVO.setIsCovered(1);
             edgeVO.setSourceNode(activityBeforeAction);
             edgeVO.setTargetNode(activityAfterAction);
-            edgeVO.setCallbacks(message);
+            edgeVO.setEventHandlers(message);
             edgeVO.setAppKey("666locdemo");
             Edge edge = edgeVOWrapper.unwrap(edgeVO);
             edgeService.save(edge);
@@ -159,7 +159,7 @@ public class EdgeController {
             edgeVO.setIsCovered(1);
             edgeVO.setSourceNode(activityBeforeAction);
             edgeVO.setTargetNode(activityAfterAction);
-            edgeVO.setCallbacks(message);
+            edgeVO.setEventHandlers(message);
             edgeVO.setAppKey("666locdemo");
             Edge edge = edgeVOWrapper.unwrap(edgeVO);
             edgeService.save(edge);

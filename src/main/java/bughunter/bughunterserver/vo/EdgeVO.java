@@ -12,7 +12,11 @@ public class EdgeVO {
 
     private String targetNode;
 
-    private String callbacks;
+    private String eventHandlers;
+
+    private String eventType;
+
+    private Long repeat;
 
     private Integer isCovered;
 
@@ -42,12 +46,28 @@ public class EdgeVO {
         this.targetNode = targetNode;
     }
 
-    public String getCallbacks() {
-        return callbacks;
+    public String getEventHandlers() {
+        return eventHandlers;
     }
 
-    public void setCallbacks(String callbacks) {
-        this.callbacks = callbacks;
+    public void setEventHandlers(String eventHandlers) {
+        this.eventHandlers = eventHandlers;
+    }
+
+    public String getEventType() {
+        return eventType;
+    }
+
+    public void setEventType(String eventType) {
+        this.eventType = eventType;
+    }
+
+    public Long getRepeat() {
+        return repeat;
+    }
+
+    public void setRepeat(Long repeat) {
+        this.repeat = repeat;
     }
 
     public Integer getIsCovered() {
