@@ -221,11 +221,12 @@ public class BugController {
         return new BugInfoKeys(appKey, bugId);
     }
 
+
     @RequestMapping(value = "/{appKey}/{currentWindow}/bugList", method = RequestMethod.POST)
     public
     @ResponseBody
-    ResultMessage getRecommendedBugList(HttpServletRequest request, @PathVariable String appKey, @PathVariable String currentWindow) {
-        return ResultMessageFactory.getResultMessage(edgeService.getRecommendedBugs(appKey, currentWindow));
+    ResultMessage getRecommendedBugs(HttpServletRequest request, @PathVariable String appKey, @PathVariable String currentWindow) {
+        return ResultMessageFactory.getResultMessage(edgeService.getRecommBugs(appKey, currentWindow));
     }
 
 }

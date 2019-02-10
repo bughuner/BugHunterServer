@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author sean
@@ -33,43 +32,7 @@ public class EdgeController {
 
     @RequestMapping(value = "/WTG", method = RequestMethod.GET)
     public String getNodeCoverage() throws Exception {
-        String uncoveredPath = "/Users/sean/Desktop/result/666locdemo/pathExtract.txt";
-        File uncoveredfile = new File(uncoveredPath);
-        if (!uncoveredfile.exists() || uncoveredfile.isDirectory())
-            throw new FileNotFoundException();
-        BufferedReader br1 = new BufferedReader(new FileReader(uncoveredfile));
-        String temp1 = null;
-        StringBuffer sb1 = new StringBuffer();
-        temp1 = br1.readLine();
-
-        List<EdgeVO> edgeVOs = new ArrayList<>();
-        while (temp1 != null) {
-            if (temp1.equals("edge:")) {
-                EdgeVO edgeVO = new EdgeVO();
-                edgeVO.setIsCovered(0);
-
-                temp1 = br1.readLine();
-                edgeVO.setSourceNode(temp1);
-
-                temp1 = br1.readLine();
-                edgeVO.setTargetNode(temp1);
-
-                edgeVO.setEventHandlers(br1.readLine());
-                edgeVO.setAppKey("666locdemo");
-                if (!edgeVO.getEventHandlers().equals("[]"))
-                    edgeVOs.add(edgeVO);
-
-            }
-            temp1 = br1.readLine();
-        }
-
-        edgeVOs.stream().distinct().collect(Collectors.toList());
-
-        for (EdgeVO edgeVO : edgeVOs) {
-            Edge edge = edgeVOWrapper.unwrap(edgeVO);
-            edgeService.save(edge);
-        }
-
+        //插入覆盖的边
         String coveredPath = "/Users/sean/Desktop/result/666locdemo/666_action.txt";
         File covered = new File(coveredPath);
         if (!covered.exists() || covered.isDirectory())
@@ -106,16 +69,55 @@ public class EdgeController {
             String message = s3.substring(0, s3.length());
 
             EdgeVO edgeVO = new EdgeVO();
-            edgeVO.setIsCovered(1);
             edgeVO.setSourceNode(activityBeforeAction);
             edgeVO.setTargetNode(activityAfterAction);
             edgeVO.setEventHandlers(message);
+            edgeVO.setEventType("click");
             edgeVO.setAppKey("666locdemo");
-            Edge edge = edgeVOWrapper.unwrap(edgeVO);
-            edgeService.save(edge);
-            temp2 = br2.readLine();
+            edgeVO.setNumber(0);
+            edgeVO.setIsCovered(1);
 
+            Edge e = edgeVOWrapper.unwrap(edgeVO);
+            edgeService.save(e);
+            temp2 = br2.readLine();
         }
+
+        String uncoveredPath = "/Users/sean/Desktop/result/666locdemo/graph.txt";
+        File uncoveredfile = new File(uncoveredPath);
+        if (!uncoveredfile.exists() || uncoveredfile.isDirectory())
+            throw new FileNotFoundException();
+        BufferedReader br1 = new BufferedReader(new FileReader(uncoveredfile));
+        String temp1 = null;
+        StringBuffer sb1 = new StringBuffer();
+        temp1 = br1.readLine();
+
+        List<EdgeVO> edgeVOs = new ArrayList<>();
+        while (temp1 != null) {
+            if (temp1.equals("edge:")) {
+                EdgeVO edgeVO = new EdgeVO();
+                edgeVO.setIsCovered(0);
+
+                temp1 = br1.readLine();
+                edgeVO.setSourceNode(temp1);
+
+                temp1 = br1.readLine();
+                edgeVO.setTargetNode(temp1);
+
+                List<Edge> edges = edgeService.getEdgeBySourceNodeAndTargetNode(edgeVO.getSourceNode(), edgeVO.getTargetNode());
+
+                if (edges.size() == 0) {
+                    edgeVO.setEventHandlers(br1.readLine());
+                    edgeVO.setEventType(br1.readLine());
+                    edgeVO.setAppKey("666locdemo");
+                    edgeVO.setNumber(0);
+                    edgeVO.setIsCovered(0);
+                    edgeService.save(edgeVOWrapper.unwrap(edgeVO));
+                }
+            }
+            temp1 = br1.readLine();
+        }
+
+
         return sb1.toString();
     }
 
@@ -148,12 +150,12 @@ public class EdgeController {
             String s1 = stringsAfter[stringsAfter.length - 1];
             String activityAfterAction = s1.substring(1, s1.length() - 3);
 
-            String[] stringsBefore = activityAfterInfo.split("\":\"");
-            String s2 = stringsAfter[stringsAfter.length - 1];
-            String activityBeforeAction = s1.substring(1, s1.length() - 3);
+            String[] stringsBefore = activityBeforeInfo.split("\":\"");
+            String s2 = stringsBefore[stringsBefore.length - 1];
+            String activityBeforeAction = s2.substring(1, s1.length() - 3);
 
-            String[] stringsMessage = activityAfterInfo.split("\":\"");
-            String message = stringsAfter[stringsAfter.length - 1];
+            String[] stringsMessage = messageInfo.split("\":\"");
+            String message = stringsMessage[stringsAfter.length - 1];
 
             EdgeVO edgeVO = new EdgeVO();
             edgeVO.setIsCovered(1);

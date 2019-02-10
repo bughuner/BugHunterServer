@@ -38,11 +38,15 @@ public class NodeController {
             String[] ss = temp.split(":");
             NodeVO nodeVO = new NodeVO();
             nodeVO.setType(ss[0]);
-            nodeVO.setWindow(ss[1]);
-            nodeVO.setAppKey("666locdemo");
-            Node node = nodeVOWrapper.unwrap(nodeVO);
-            nodeService.save(node);
-            sb.append(temp + " ");
+            String window = ss[1];
+            if (nodeService.findByWindow(window) == null) {
+                nodeVO.setWindow(ss[1]);
+                nodeVO.setAppKey("666locdemo");
+                Node node = nodeVOWrapper.unwrap(nodeVO);
+                nodeService.save(node);
+                sb.append(temp + " ");
+            }
+
             temp = br.readLine();
         }
         return sb.toString();

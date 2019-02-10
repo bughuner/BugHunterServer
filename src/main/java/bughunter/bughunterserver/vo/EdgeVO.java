@@ -16,7 +16,7 @@ public class EdgeVO {
 
     private String eventType;
 
-    private Long repeat;
+    private Integer number;
 
     private Integer isCovered;
 
@@ -62,12 +62,12 @@ public class EdgeVO {
         this.eventType = eventType;
     }
 
-    public Long getRepeat() {
-        return repeat;
+    public Integer getNumber() {
+        return number;
     }
 
-    public void setRepeat(Long repeat) {
-        this.repeat = repeat;
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 
     public Integer getIsCovered() {

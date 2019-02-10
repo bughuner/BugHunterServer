@@ -4,10 +4,7 @@ import bughunter.bughunterserver.DTO.wrapper.NodeDTOWrapper;
 import bughunter.bughunterserver.dao.NodeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author sean
@@ -22,9 +19,9 @@ public class GraphDTO {
 
     private String appKey;
     private List<NodeDTO> nodeDTOList;   //图的顶点集
-    private Map<NodeDTO, List<EdgeDTO>> ver_edgeList_map;  //图的每个顶点对应的有向边
+    private HashMap<NodeDTO, List<EdgeDTO>> ver_edgeList_map;  //图的每个顶点对应的有向边
 
-    public GraphDTO(List<NodeDTO> nodeDTOList, Map<NodeDTO, List<EdgeDTO>> ver_edgeList_map, String appKey) {
+    public GraphDTO(List<NodeDTO> nodeDTOList, HashMap<NodeDTO, List<EdgeDTO>> ver_edgeList_map, String appKey) {
         super();
         this.nodeDTOList = nodeDTOList;
         this.ver_edgeList_map = ver_edgeList_map;
@@ -43,7 +40,7 @@ public class GraphDTO {
         return ver_edgeList_map;
     }
 
-    public void setVer_edgeList_map(Map<NodeDTO, List<EdgeDTO>> ver_edgeList_map) {
+    public void setVer_edgeList_map(HashMap<NodeDTO, List<EdgeDTO>> ver_edgeList_map) {
         this.ver_edgeList_map = ver_edgeList_map;
     }
 

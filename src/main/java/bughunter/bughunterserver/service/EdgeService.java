@@ -14,9 +14,9 @@ public interface EdgeService {
 
     Edge save(Edge edge);
 
-    List<List<Edge>> getRecommendedBugs(String appKey, String currentWindow);
-
-    Edge getEdgeBySourceNodeAndTargetNodeAndCallbacksAndAppkey(String sourceNode, String targetNode, String callbacks, String callbacks1);
-
     Edge getNextBugHint(String currentWindow, List<EdgeDTO> edgeDTOs);
+
+    List<Edge> getRecommBugs(String appKey, String currentWindow);
+
+    List<Edge> getEdgeBySourceNodeAndTargetNode(String sourceNode, String targetNode);
 }

@@ -21,7 +21,11 @@ public interface EdgeDao extends CrudRepository<Edge, Long> {
 
     List<Edge> findBySourceNodeAndTargetNode(String sourceWindow, String targetWindow);
 
-//    @Query("SELECT e FROM edge e WHERE e.sourceNode = :sourceNode and e.targetNode = :targetNode " +
+    //    @Query("SELECT e FROM edge e WHERE e.sourceNode = :sourceNode and e.targetNode = :targetNode " +
 //            "and e.callbacks = :callbacks and e.appKey = :appKey")
     Edge findBySourceNodeAndTargetNodeAndEventHandlersAndAppKey(String sourceNode, String targetNode, String eventHandlers, String appKey);
+
+    Edge findBySourceNodeAndTargetNodeAndIsCovered(String activityBeforeAction, String activityAfterAction, int i);
+
+    List<Edge> findByAppKey(String appKey);
 }

@@ -16,7 +16,7 @@ public class EdgeDTO {
 
     private String eventType;
 
-    private Long repeat;
+    private Integer number;
 
     private Integer isCovered;
 
@@ -92,11 +92,11 @@ public class EdgeDTO {
         this.eventType = eventType;
     }
 
-    public Long getRepeat() {
-        return repeat;
+    public Integer getNumber() {
+        return number;
     }
 
-    public void setRepeat(Long repeat) {
-        this.repeat = repeat;
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 }

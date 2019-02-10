@@ -21,7 +21,7 @@ public class EdgeVOWrapper extends BaseWrapper<EdgeVO, Edge> {
         edgeVO.setIsCovered(edge.getIsCovered());
         edgeVO.setAppKey(edge.getAppKey());
         edgeVO.setEventType(edge.getEventType());
-        edgeVO.setRepeat(edge.getRepeat());
+        edgeVO.setNumber(edge.getNumber());
         return edgeVO;
     }
 
@@ -34,7 +34,7 @@ public class EdgeVOWrapper extends BaseWrapper<EdgeVO, Edge> {
         edge.setEventType(data.getEventType());
         edge.setIsCovered(data.getIsCovered());
         edge.setAppKey(data.getAppKey());
-        edge.setRepeat(data.getRepeat());
+        edge.setNumber(data.getNumber());
         return edge;
     }
 }

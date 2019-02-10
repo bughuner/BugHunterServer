@@ -21,6 +21,7 @@ public class EdgeDTOWrapper extends BaseDTOWrapper<EdgeDTO, Edge> {
         edgeDTO.setIsCovered(edge.getIsCovered());
         edgeDTO.setSourceNode(edge.getSourceNode());
         edgeDTO.setTargetNode(edge.getTargetNode());
+        edgeDTO.setNumber(edge.getNumber());
         return edgeDTO;
     }
 
@@ -30,10 +31,12 @@ public class EdgeDTOWrapper extends BaseDTOWrapper<EdgeDTO, Edge> {
 
         edge.setAppKey(data.getAppKey());
         edge.setTargetNode(data.getTargetNode());
-        edge.setId(data.getId());
         edge.setSourceNode(data.getSourceNode());
         edge.setEventHandlers(data.getEventHandlers());
         edge.setIsCovered(data.getIsCovered());
+        edge.setNumber(data.getNumber());
+        edge.setEventType(data.getEventType());
+        edge.setEventHandlers(data.getEventHandlers());
         return edge;
     }
 }

@@ -22,14 +22,14 @@ public class Edge {
     @Column(name = "target_node")
     private String targetNode;
 
-    @Column(name = "eventHandlers")
+    @Column(name = "event_handlers")
     private String eventHandlers;
 
     @Column(name = "event_type")
     private String eventType;
 
-    @Column(name = "repeat")
-    private Long repeat;
+    @Column(name = "number")
+    private Integer number;
 
     private static int weight = 1;
     /**
@@ -106,11 +106,11 @@ public class Edge {
         this.eventType = eventType;
     }
 
-    public Long getRepeat() {
-        return repeat;
+    public Integer getNumber() {
+        return number;
     }
 
-    public void setRepeat(Long repeat) {
-        this.repeat = repeat;
+    public void setNumber(Integer number) {
+        this.number = number;
     }
 }
