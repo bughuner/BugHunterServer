@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author sean
@@ -96,7 +95,7 @@ public class EdgeServiceImpl implements EdgeService {
     }
 
     @Override
-    public List<Edge> getRecommBugs(String appKey, String currentWindow) {
+    public List<List<NodeDTO>> getRecommBugs(String appKey, String currentWindow) {
         NodeDTO nodeDTO = nodeDTOWrapper.wrap(nodeDao.findByWindow(currentWindow));
         List<Edge> edges = edgeDao.findByAppKey(appKey);
 
@@ -105,12 +104,23 @@ public class EdgeServiceImpl implements EdgeService {
         for (Edge e : edges) {
             List<Edge> edgeList = new ArrayList<>();
             Node n = nodeDao.findByWindow(e.getSourceNode());
-            if (edgeList.stream().noneMatch(edge -> edge.getSourceNode().equals(e.getSourceNode()))
-                    && edgeList.stream().noneMatch(edge -> edge.getTargetNode().equals(e.getTargetNode()))) {
-                edgeList.add(e);
+            if (!nodes.contains(n)) {
+                edgeList = edgeDao.findBySourceNode(n.getWindow());
                 nodes.add(n);
+                map.put(nodeDTOWrapper.wrap(n), edgeDTOWrapper.wrap(edgeList));
             }
-            map.put(nodeDTOWrapper.wrap(n), edgeDTOWrapper.wrap(edgeList));
+
+//                if (edgeList.stream().noneMatch(edge -> edge.getSourceNode().equals(e.getSourceNode()))
+//                        && edgeList.stream().noneMatch(edge -> edge.getTargetNode().equals(e.getTargetNode()))
+//                        && n != null) {
+//                    edgeList.add(e);
+//                    if ()
+//                        nodes.add(n);
+//                }
+//            if (n != null) {
+//                map.put(nodeDTOWrapper.wrap(n), edgeDTOWrapper.wrap(edgeList));
+//            }
+
         }
 
         GraphDTO graphDTO = new GraphDTO(nodeDTOWrapper.wrap(nodes), map, appKey);
@@ -120,30 +130,68 @@ public class EdgeServiceImpl implements EdgeService {
             List<NodeDTO> nodeDTOs = graphDTO.dijkstraTravasal(nodeDTO, nodeDTOWrapper.wrap(n));
             recommNodes.add(nodeDTOs);
         }
-        quickSort(recommNodes);
 
-        List<Edge> edgeList = new ArrayList<>();
-        for (List<NodeDTO> nodeDTOs : recommNodes) {
-            Node sourceNode = null;
-            Node targetNode = null;
-            if (nodeDTOs.size() < 2) {
-                sourceNode = nodeDTOWrapper.unwrap(nodeDTO);
-                targetNode = nodeDTOWrapper.unwrap(nodeDTOs.get(0));
-            } else {
-                sourceNode = nodeDTOWrapper.unwrap(nodeDTOs.get(nodeDTOs.size() - 2));
-                targetNode = nodeDTOWrapper.unwrap(nodeDTOs.get(nodeDTOs.size() - 1));
+        List<List<NodeDTO>> result = sort(recommNodes, nodeDTO);
+//        quickSort(recommNodes);
+
+        return result;
+
+//        List<List<Edge>> result = new ArrayList<>();
+//        List<Edge> edgeList = new ArrayList<>();
+//        for (List<NodeDTO> nodeDTOs : recommNodes) {
+//            Node sourceNode = null;
+//            Node targetNode = null;
+//            if (nodeDTOs.size() < 2) {
+//                sourceNode = nodeDTOWrapper.unwrap(nodeDTO);
+//                targetNode = nodeDTOWrapper.unwrap(nodeDTOs.get(0));
+//            } else {
+//                sourceNode = nodeDTOWrapper.unwrap(nodeDTOs.get(nodeDTOs.size() - 2));
+//                targetNode = nodeDTOWrapper.unwrap(nodeDTOs.get(nodeDTOs.size() - 1));
+//            }
+//
+//            List<Edge> es = edgeDao.findBySourceNodeAndTargetNode(sourceNode.getWindow(), targetNode.getWindow());
+//            if (es.size() != 1 || es.get(0).getIsCovered() != 0)
+//                //只添加自动化测试工具得出的异常边
+//                edgeList.addAll(es);
+//        }
+//        return edgeList.stream().distinct().collect(Collectors.toList());
+    }
+
+    private List<List<NodeDTO>> sort(List<List<NodeDTO>> recommNodes, NodeDTO nodeDTO) {
+        List<NodeDTO> temp = new ArrayList<>();
+        for (int i = 0; i < recommNodes.size() - 1; i++) {
+            for (int j = i + 1; j < recommNodes.size() - i - 1; j++) {
+                if (recommNodes.get(j).size() == 1
+                        && (recommNodes.get(j).get(0).getWindow().equals(nodeDTO.getWindow()))) {
+                    temp = recommNodes.get(0);
+                    recommNodes.set(0, recommNodes.get(j));
+                    recommNodes.set(j, temp);
+                }
+                if (recommNodes.get(j + 1).size() < recommNodes.get(j).size()) {
+                    temp = recommNodes.get(j);
+                    recommNodes.set(j, recommNodes.get(j + 1));
+                    recommNodes.set(j + 1, temp);
+                }
             }
-
-            List<Edge> es = edgeDao.findBySourceNodeAndTargetNode(sourceNode.getWindow(), targetNode.getWindow());
-            if (es.size() != 1 || es.get(0).getIsCovered() != 0)
-                //只添加自动化测试工具得出的异常边
-                edgeList.addAll(es);
         }
-        return edgeList.stream().distinct().collect(Collectors.toList());
+        return recommNodes;
+
     }
 
     @Override
     public List<Edge> getEdgeBySourceNodeAndTargetNode(String sourceNode, String targetNode) {
         return edgeDao.findBySourceNodeAndTargetNode(sourceNode, targetNode);
+    }
+
+    @Override
+    public List<List<NodeDTO>> getRecommActivities(String appKey, String currentWindow) {
+        Node node = nodeDao.findByWindow(currentWindow);
+
+        return null;
+    }
+
+    @Override
+    public List<Edge> getBugEdgeBySourceNodeAndTargetNode(String currentWindow, String window) {
+        return edgeDao.findBySourceNodeAndTargetNodeAndIsCovered(currentWindow, window, 1);
     }
 }

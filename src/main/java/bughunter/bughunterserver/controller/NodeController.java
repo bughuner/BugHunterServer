@@ -26,7 +26,7 @@ public class NodeController {
 
     @RequestMapping(value = "/allNodes", method = RequestMethod.GET)
     public String saveAllNodes() throws IOException {
-        String path = "/Users/sean/Desktop/result/666locdemo/allNodes.txt";
+        String path = "/Users/sean/Desktop/Cheers/allNodes.txt";
         File file = new File(path);
         if (!file.exists() || file.isDirectory())
             throw new FileNotFoundException();
@@ -41,7 +41,7 @@ public class NodeController {
             String window = ss[1];
             if (nodeService.findByWindow(window) == null) {
                 nodeVO.setWindow(ss[1]);
-                nodeVO.setAppKey("666locdemo");
+                nodeVO.setAppKey("JianDou");
                 Node node = nodeVOWrapper.unwrap(nodeVO);
                 nodeService.save(node);
                 sb.append(temp + " ");

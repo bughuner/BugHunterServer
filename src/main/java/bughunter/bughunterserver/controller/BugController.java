@@ -1,8 +1,10 @@
 package bughunter.bughunterserver.controller;
 
+import bughunter.bughunterserver.DTO.NodeDTO;
 import bughunter.bughunterserver.factory.ResultMessageFactory;
 import bughunter.bughunterserver.model.entity.BugInfo;
 import bughunter.bughunterserver.model.entity.BugInfoKeys;
+import bughunter.bughunterserver.model.entity.Edge;
 import bughunter.bughunterserver.service.BugService;
 import bughunter.bughunterserver.service.EdgeService;
 import bughunter.bughunterserver.until.Constants;
@@ -21,6 +23,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -222,11 +225,36 @@ public class BugController {
     }
 
 
-    @RequestMapping(value = "/{appKey}/{currentWindow}/bugList", method = RequestMethod.POST)
+    @RequestMapping(value = "/{appKey}/{currentWindow}/bugList", method = RequestMethod.GET)
     public
     @ResponseBody
     ResultMessage getRecommendedBugs(HttpServletRequest request, @PathVariable String appKey, @PathVariable String currentWindow) {
-        return ResultMessageFactory.getResultMessage(edgeService.getRecommBugs(appKey, currentWindow));
+        String[] infos = currentWindow.split("\\.");
+        currentWindow = infos[infos.length - 1];
+        List<List<NodeDTO>> nodeDTOs = edgeService.getRecommBugs(appKey, currentWindow);
+        List<Edge> edgeList = new ArrayList<>();
+        for (List<NodeDTO> nodeDTOList: nodeDTOs){
+            String targetNode = nodeDTOList.get(nodeDTOList.size()-1).getWindow();
+            List<Edge> edges = edgeService.getBugEdgeBySourceNodeAndTargetNode(currentWindow, targetNode);
+            edgeList.addAll(edges);
+        }
+        return ResultMessageFactory.getResultMessage(edgeList);
+    }
+
+    @RequestMapping(value = "{appKey}/{currentWindow}/activityList", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    ResultMessage getRecommendedAcvitities(HttpServletRequest request, @PathVariable String appKey, @PathVariable String currentWindow) {
+        String[] infos = currentWindow.split("\\.");
+        currentWindow = infos[infos.length - 1];
+
+        List<List<NodeDTO>> nodeDTOs = edgeService.getRecommActivities(appKey, currentWindow);
+        List<String> messages = new ArrayList<>();
+        for (List<NodeDTO> nodeDTOList: nodeDTOs){
+            String message = "source: "+nodeDTOList.get(nodeDTOList.size()-1).getWindow();
+            messages.add(message);
+        }
+        return ResultMessageFactory.getResultMessage(messages);
     }
 
 }

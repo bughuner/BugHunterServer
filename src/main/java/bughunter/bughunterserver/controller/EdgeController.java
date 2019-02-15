@@ -33,7 +33,7 @@ public class EdgeController {
     @RequestMapping(value = "/WTG", method = RequestMethod.GET)
     public String getNodeCoverage() throws Exception {
         //插入覆盖的边
-        String coveredPath = "/Users/sean/Desktop/result/666locdemo/666_action.txt";
+        String coveredPath = "/Users/sean/Desktop/Cheers/action.txt";
         File covered = new File(coveredPath);
         if (!covered.exists() || covered.isDirectory())
             throw new FileNotFoundException();
@@ -44,25 +44,27 @@ public class EdgeController {
         while (temp2 != null) {
 
             /**
-             * {"time":"2018-11-29 14:04:56,102
-             * type":"CLICK
-             * message":"Click Home button because has tried more than 3 times
-             * activityBeforeAction":".LocDemo
-             * activityAfterAction":".Launcher"}
+             * 0{"time":"2018-11-29 14:04:56,102
+             * 1type":"CLICK
+             * 2message":"Click Home button because has tried more than 3 times
+             * 3activityBeforeAction":".activity.MainActivity
+             * 4activityAfterAction":".Launcher"}
              * */
             Log.info(temp2);
             String[] strings = temp2.split("\",\"");
-            String activityAfterInfo = strings[strings.length - 1];
-            String activityBeforeInfo = strings[strings.length - 2];
-            String messageInfo = strings[strings.length - 3];
+            String activityAfterInfo = strings[4];
+            String activityBeforeInfo = strings[3];
+            String messageInfo = strings[2];
 
             String[] stringsAfter = activityAfterInfo.split("\":\"");
             String s1 = stringsAfter[stringsAfter.length - 1];
-            String activityAfterAction = s1.substring(1, s1.length() - 2);
+            //.activity.MainActivity
+            //0123456789
+            String activityAfterAction = s1.substring(10, s1.length());
 
             String[] stringsBefore = activityBeforeInfo.split("\":\"");
             String s2 = stringsBefore[stringsBefore.length - 1];
-            String activityBeforeAction = s2.substring(1, s2.length());
+            String activityBeforeAction = s2.substring(10, s2.length());
 
             String[] stringsMessage = messageInfo.split("\":\"");
             String s3 = stringsMessage[stringsMessage.length - 1];
@@ -73,7 +75,7 @@ public class EdgeController {
             edgeVO.setTargetNode(activityAfterAction);
             edgeVO.setEventHandlers(message);
             edgeVO.setEventType("click");
-            edgeVO.setAppKey("666locdemo");
+            edgeVO.setAppKey("JianDou");
             edgeVO.setNumber(0);
             edgeVO.setIsCovered(1);
 
@@ -82,7 +84,7 @@ public class EdgeController {
             temp2 = br2.readLine();
         }
 
-        String uncoveredPath = "/Users/sean/Desktop/result/666locdemo/graph.txt";
+        String uncoveredPath = "/Users/sean/Desktop/Cheers/graph.txt";
         File uncoveredfile = new File(uncoveredPath);
         if (!uncoveredfile.exists() || uncoveredfile.isDirectory())
             throw new FileNotFoundException();
@@ -108,7 +110,7 @@ public class EdgeController {
                 if (edges.size() == 0) {
                     edgeVO.setEventHandlers(br1.readLine());
                     edgeVO.setEventType(br1.readLine());
-                    edgeVO.setAppKey("666locdemo");
+                    edgeVO.setAppKey("JianDou");
                     edgeVO.setNumber(0);
                     edgeVO.setIsCovered(0);
                     edgeService.save(edgeVOWrapper.unwrap(edgeVO));
@@ -121,59 +123,10 @@ public class EdgeController {
         return sb1.toString();
     }
 
-    @RequestMapping(value = "/pathExtractMode", method = RequestMethod.GET)
-    public String setCallbacksByAutomaticTool() throws IOException {
-        String path = "/Users/sean/Desktop/result/666locdemo/666_action.txt";
-        File file = new File(path);
-        if (!file.exists() || file.isDirectory())
-            throw new FileNotFoundException();
-        BufferedReader br = new BufferedReader(new FileReader(file));
-        String temp = null;
-        StringBuffer sb = new StringBuffer();
-        temp = br.readLine();
-        while (temp != null) {
-
-            /**
-             * {"time":"2018-11-29 14:04:56,102
-             * type":"CLICK
-             * message":"Click Home button because has tried more than 3 times
-             * activityBeforeAction":".LocDemo
-             * activityAfterAction":".Launcher"}
-             * */
-            Log.info(temp);
-            String[] strings = temp.split("\",\"");
-            String activityAfterInfo = strings[strings.length - 1];
-            String activityBeforeInfo = strings[strings.length - 2];
-            String messageInfo = strings[strings.length - 3];
-
-            String[] stringsAfter = activityAfterInfo.split("\":\"");
-            String s1 = stringsAfter[stringsAfter.length - 1];
-            String activityAfterAction = s1.substring(1, s1.length() - 3);
-
-            String[] stringsBefore = activityBeforeInfo.split("\":\"");
-            String s2 = stringsBefore[stringsBefore.length - 1];
-            String activityBeforeAction = s2.substring(1, s1.length() - 3);
-
-            String[] stringsMessage = messageInfo.split("\":\"");
-            String message = stringsMessage[stringsAfter.length - 1];
-
-            EdgeVO edgeVO = new EdgeVO();
-            edgeVO.setIsCovered(1);
-            edgeVO.setSourceNode(activityBeforeAction);
-            edgeVO.setTargetNode(activityAfterAction);
-            edgeVO.setEventHandlers(message);
-            edgeVO.setAppKey("666locdemo");
-            Edge edge = edgeVOWrapper.unwrap(edgeVO);
-            edgeService.save(edge);
-
-            temp = br.readLine();
-
-        }
-        return null;
-    }
-
     @RequestMapping(value = "/path/nextHint/{currentWindow}", method = RequestMethod.POST)
     public Edge getNextBugHint(@PathVariable String currentWindow, @RequestBody List<EdgeDTO> edgeDTOs) {
+        String[] infos = currentWindow.split("\\.");
+        currentWindow = infos[infos.length-1];
         return edgeService.getNextBugHint(currentWindow, edgeDTOs);
     }
 }

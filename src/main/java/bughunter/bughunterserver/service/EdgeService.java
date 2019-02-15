@@ -1,6 +1,7 @@
 package bughunter.bughunterserver.service;
 
 import bughunter.bughunterserver.DTO.EdgeDTO;
+import bughunter.bughunterserver.DTO.NodeDTO;
 import bughunter.bughunterserver.model.entity.Edge;
 
 import java.util.List;
@@ -16,7 +17,11 @@ public interface EdgeService {
 
     Edge getNextBugHint(String currentWindow, List<EdgeDTO> edgeDTOs);
 
-    List<Edge> getRecommBugs(String appKey, String currentWindow);
+    List<List<NodeDTO>> getRecommBugs(String appKey, String currentWindow);
 
     List<Edge> getEdgeBySourceNodeAndTargetNode(String sourceNode, String targetNode);
+
+    List<List<NodeDTO>> getRecommActivities(String appKey, String currentWindow);
+
+    List<Edge> getBugEdgeBySourceNodeAndTargetNode(String currentWindow, String window);
 }
