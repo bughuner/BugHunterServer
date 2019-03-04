@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author sean
@@ -23,6 +24,8 @@ import java.util.List;
  */
 @Service
 public class EdgeServiceImpl implements EdgeService {
+
+    public static int CROWD_WORKER_NUMBER = 100;
 
     @Autowired
     private EdgeDao edgeDao;
@@ -85,106 +88,119 @@ public class EdgeServiceImpl implements EdgeService {
 
 
     @Override
-    public Edge getNextBugHint(String currentWindow, List<EdgeDTO> edgeDTOs) {
-        for (int i = 0; i < edgeDTOs.size() - 1; i++) {
-            if (edgeDTOs.get(i).getSourceNode().equals(currentWindow)) {
-                return edgeDTOWrapper.unwrap(edgeDTOs.get(i - 1));
+    public Edge getNextBugHint(String currentWindow, String nextWindow) {
+        //按照number降序
+        List<Edge> edgeList =
+                edgeDao.findBySourceNodeAndTargetNodeOrderByNumber(currentWindow, nextWindow);
+        //存在isCovered为1的Edge
+        if (edgeList.stream().
+                anyMatch(edge -> edge.getIsCovered() == 1)) {
+            //从isCovered中选
+            List<Edge> coveredEdges = edgeList.stream().
+                    filter(edge -> edge.getIsCovered() == 1).collect(Collectors.toList());
+            return coveredEdges.get(0);
+        } else {
+            //初始情况,所有number都为0
+            if (edgeList.stream().allMatch(edge -> edge.getNumber() == 0)) {
+                //随机选择
+                return edgeList.get((int) (0 + Math.random() * (edgeList.size() - 0 + 0)));
+            } else {
+                //按number降序中,选择小于60%人数且最大的
+                edgeList.stream().filter(edge -> edge.getNumber() <= 0.6 * CROWD_WORKER_NUMBER);
+                return edgeList.get(0);
             }
         }
-        return null;
     }
 
     @Override
-    public List<List<NodeDTO>> getRecommBugs(String appKey, String currentWindow) {
-        NodeDTO nodeDTO = nodeDTOWrapper.wrap(nodeDao.findByWindow(currentWindow));
-        List<Edge> edges = edgeDao.findByAppKey(appKey);
-
-        List<Node> nodes = new ArrayList<>();
+    public List<Edge> getRecommBugs(String appKey, String currentWindow) {
+        //当前用户所在节点
+        NodeDTO currNodeDTO = nodeDTOWrapper.wrap(nodeDao.findByWindow(currentWindow));
         HashMap<NodeDTO, List<EdgeDTO>> map = new HashMap<>();
-        for (Edge e : edges) {
+        //待测App所有覆盖边的目标节点
+        List<Node> nodeList = nodeDao.findByAppKey(appKey);
+        List<String> nodeNames = nodeList.stream().map(node -> node.getWindow()).collect(Collectors.toList());
+
+        for (Node node : nodeList) {
+            //节点对应的有向边
+            List<Edge> edges = edgeDao.findBySourceNode(node.getWindow());
             List<Edge> edgeList = new ArrayList<>();
-            Node n = nodeDao.findByWindow(e.getSourceNode());
-            if (!nodes.contains(n)) {
-                edgeList = edgeDao.findBySourceNode(n.getWindow());
-                nodes.add(n);
-                map.put(nodeDTOWrapper.wrap(n), edgeDTOWrapper.wrap(edgeList));
+            //两个节点一个方向下,只能存在一条有向边
+            for (Edge edge : edges) {
+                if (edgeList.stream().noneMatch(edge1 -> edge1.getSourceNode().equals(edge.getSourceNode())
+                        && edge1.getTargetNode().equals(edge.getTargetNode()))) {
+                    //去环
+                    if (!edge.getSourceNode().equals(edge.getTargetNode()))
+                        edgeList.add(edge);
+                }
             }
-
-//                if (edgeList.stream().noneMatch(edge -> edge.getSourceNode().equals(e.getSourceNode()))
-//                        && edgeList.stream().noneMatch(edge -> edge.getTargetNode().equals(e.getTargetNode()))
-//                        && n != null) {
-//                    edgeList.add(e);
-//                    if ()
-//                        nodes.add(n);
-//                }
-//            if (n != null) {
-//                map.put(nodeDTOWrapper.wrap(n), edgeDTOWrapper.wrap(edgeList));
-//            }
-
+            map.put(nodeDTOWrapper.wrap(node), edgeDTOWrapper.wrap(edgeList));
         }
 
-        GraphDTO graphDTO = new GraphDTO(nodeDTOWrapper.wrap(nodes), map, appKey);
+        GraphDTO graphDTO = new GraphDTO(nodeDTOWrapper.wrap(nodeList), map, appKey);
 
         List<List<NodeDTO>> recommNodes = new ArrayList<>();
-        for (Node n : nodes) {
-            List<NodeDTO> nodeDTOs = graphDTO.dijkstraTravasal(nodeDTO, nodeDTOWrapper.wrap(n));
-            recommNodes.add(nodeDTOs);
-        }
-
-        List<List<NodeDTO>> result = sort(recommNodes, nodeDTO);
-//        quickSort(recommNodes);
-
-        return result;
-
-//        List<List<Edge>> result = new ArrayList<>();
-//        List<Edge> edgeList = new ArrayList<>();
-//        for (List<NodeDTO> nodeDTOs : recommNodes) {
-//            Node sourceNode = null;
-//            Node targetNode = null;
-//            if (nodeDTOs.size() < 2) {
-//                sourceNode = nodeDTOWrapper.unwrap(nodeDTO);
-//                targetNode = nodeDTOWrapper.unwrap(nodeDTOs.get(0));
-//            } else {
-//                sourceNode = nodeDTOWrapper.unwrap(nodeDTOs.get(nodeDTOs.size() - 2));
-//                targetNode = nodeDTOWrapper.unwrap(nodeDTOs.get(nodeDTOs.size() - 1));
-//            }
-//
-//            List<Edge> es = edgeDao.findBySourceNodeAndTargetNode(sourceNode.getWindow(), targetNode.getWindow());
-//            if (es.size() != 1 || es.get(0).getIsCovered() != 0)
-//                //只添加自动化测试工具得出的异常边
-//                edgeList.addAll(es);
-//        }
-//        return edgeList.stream().distinct().collect(Collectors.toList());
-    }
-
-    private List<List<NodeDTO>> sort(List<List<NodeDTO>> recommNodes, NodeDTO nodeDTO) {
-        List<NodeDTO> temp = new ArrayList<>();
-        for (int i = 0; i < recommNodes.size() - 1; i++) {
-            for (int j = i + 1; j < recommNodes.size() - i - 1; j++) {
-                if (recommNodes.get(j).size() == 1
-                        && (recommNodes.get(j).get(0).getWindow().equals(nodeDTO.getWindow()))) {
-                    temp = recommNodes.get(0);
-                    recommNodes.set(0, recommNodes.get(j));
-                    recommNodes.set(j, temp);
-                }
-                if (recommNodes.get(j + 1).size() < recommNodes.get(j).size()) {
-                    temp = recommNodes.get(j);
-                    recommNodes.set(j, recommNodes.get(j + 1));
-                    recommNodes.set(j + 1, temp);
-                }
+        //寻找测试用例的目标节点集合
+        List<Edge> edgeList = edgeDao.findByAppKeyAndIsCovered(appKey, 1);
+        List<Node> nodes = new ArrayList<>();
+        for (Edge edge : edgeList) {
+            Node node = nodeDao.findByWindow(edge.getTargetNode());
+            if (nodes.stream().noneMatch(node1 -> node1.equals(node))) {
+                nodes.add(node);
             }
         }
-        return recommNodes;
+        //当前节点到目标节点的最短路径
+        for (Node n : nodes) {
+            int start = nodeList.indexOf(nodeDao.findByWindow(currentWindow));
+            int dest = nodeList.indexOf(n);
+            List<NodeDTO> nodeDTOs = graphDTO.dijkstraTravasal(start, dest);
 
+            //排除不可达节点
+            //nodeDTOs.size() == 1 && !nodeDTOs.get(0).equals(currNodeDTO);
+            if (nodeDTOs.size() != 1 || nodeDTOs.get(0).equals(currNodeDTO)) {
+                recommNodes.add(nodeDTOs);
+            }
+        }
+
+        List<Edge> results = new ArrayList<>();
+
+        for (List<NodeDTO> nodePath : recommNodes) {
+            String path = "";
+            for (NodeDTO nodeDTO : nodePath) {
+                path.concat(nodeDTO.getWindow() + " ");
+            }
+            //排除不可达节点
+            if (nodePath.size() != 1 || nodePath.get(0).equals(currNodeDTO)) {
+                List<Edge> recommEdges;
+                NodeDTO sourceNode;
+                NodeDTO targetNode;
+
+                if (nodePath.size() == 1 && nodePath.get(0).equals(currNodeDTO)) {
+                    //起始节点自身存在环的情况
+                    sourceNode = currNodeDTO;
+                    targetNode = currNodeDTO;
+                } else {
+                    //正常情况
+                    sourceNode = nodePath.get(nodePath.size() - 2);
+                    targetNode = nodePath.get(nodePath.size() - 1);
+                }
+                recommEdges = edgeDao.findBySourceNodeAndTargetNodeAndIsCoveredOrderByNumber(
+                        sourceNode.getWindow(), targetNode.getWindow(), 1);
+                recommEdges.stream().filter(edge -> edge.getNumber() < 0.6 * CROWD_WORKER_NUMBER);
+                results.addAll(recommEdges);
+            }
+        }
+        return results;
     }
+
 
     @Override
     public List<Edge> getEdgeBySourceNodeAndTargetNode(String sourceNode, String targetNode) {
-        return edgeDao.findBySourceNodeAndTargetNode(sourceNode, targetNode);
+        return edgeDao.findBySourceNodeAndTargetNodeOrderByNumber(sourceNode, targetNode);
     }
 
     @Override
-    public List<List<NodeDTO>> getRecommActivities(String appKey, String currentWindow) {
+    public List<Edge> getRecommActivities(String appKey, String currentWindow) {
         Node node = nodeDao.findByWindow(currentWindow);
 
         return null;
@@ -192,6 +208,6 @@ public class EdgeServiceImpl implements EdgeService {
 
     @Override
     public List<Edge> getBugEdgeBySourceNodeAndTargetNode(String currentWindow, String window) {
-        return edgeDao.findBySourceNodeAndTargetNodeAndIsCovered(currentWindow, window, 1);
+        return edgeDao.findBySourceNodeAndTargetNodeAndIsCoveredOrderByNumber(currentWindow, window, 1);
     }
 }

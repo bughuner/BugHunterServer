@@ -6,17 +6,19 @@ package bughunter.bughunterserver.DTO;
  */
 public class NodeDTO {
 
+    private final static int infinite_dis = Integer.MAX_VALUE;
+
     private Long id;
 
     private String appKey;
 
     private String window;
-
-    private boolean known; //此节点之前是否已知
-
-    private int adjuDist; //此节点距离
-
-    private NodeDTO parent; //当前从初始节点到此节点的最短路径下，的父节点。
+    //此节点之前是否已知
+    private boolean known;
+    //保存从开始节点到此节点距离
+    private int adjuDist = 0;
+    //当前从初始节点到此节点的最短路径下的父节点
+    private NodeDTO parent;
 
     public Long getId() {
         return id;
@@ -64,5 +66,31 @@ public class NodeDTO {
 
     public void setParent(NodeDTO parent) {
         this.parent = parent;
+    }
+
+    public NodeDTO() {
+        this.known = false;
+        this.adjuDist = infinite_dis;
+        this.parent = null;
+    }
+
+    public NodeDTO(String name) {
+        this.known = false;
+        this.adjuDist = infinite_dis;
+        this.parent = null;
+        this.window = name;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (!(obj instanceof NodeDTO)) {
+            throw new ClassCastException("an object to compare with a Vertext must be Vertex");
+        }
+
+        if (this.window == null) {
+            throw new NullPointerException("name of Vertex to be compared cannot be null");
+        }
+
+        return this.window.equals(obj);
     }
 }

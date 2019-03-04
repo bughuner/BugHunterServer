@@ -12,36 +12,54 @@ import java.util.*;
  */
 public class GraphDTO {
 
+    private List<NodeDTO> nodeDTOs;   //图的顶点集
+    private HashMap<NodeDTO, List<EdgeDTO>> node_edgeList_map;  //图的每个顶点对应的有向边
+    private String appKey;
+
+    public GraphDTO(List<NodeDTO> nodeDTOs, HashMap<NodeDTO, List<EdgeDTO>> node_edgeList_map, String appKey) {
+        super();
+        this.nodeDTOs = nodeDTOs;
+        this.node_edgeList_map = node_edgeList_map;
+        this.appKey = appKey;
+    }
+
+    public List<NodeDTO> getNodeDTOs() {
+        return nodeDTOs;
+    }
+
+    public void setNodeDTOs(List<NodeDTO> nodeDTOs) {
+        this.nodeDTOs = nodeDTOs;
+    }
+
+
+    public HashMap<NodeDTO, List<EdgeDTO>> getNode_edgeList_map() {
+        return node_edgeList_map;
+    }
+
+    public void setNode_edgeList_map(HashMap<NodeDTO, List<EdgeDTO>> node_edgeList_map) {
+        this.node_edgeList_map = node_edgeList_map;
+    }
+
+
     @Autowired
     NodeDao nodeDao;
     @Autowired
     NodeDTOWrapper nodeDTOWrapper;
 
-    private String appKey;
-    private List<NodeDTO> nodeDTOList;   //图的顶点集
-    private HashMap<NodeDTO, List<EdgeDTO>> ver_edgeList_map;  //图的每个顶点对应的有向边
-
-    public GraphDTO(List<NodeDTO> nodeDTOList, HashMap<NodeDTO, List<EdgeDTO>> ver_edgeList_map, String appKey) {
-        super();
-        this.nodeDTOList = nodeDTOList;
-        this.ver_edgeList_map = ver_edgeList_map;
-        this.appKey = appKey;
-    }
-
     public List<NodeDTO> getNodeDTOList() {
-        return nodeDTOList;
+        return nodeDTOs;
     }
 
     public void setNodeDTOList(List<NodeDTO> nodeDTOList) {
-        this.nodeDTOList = nodeDTOList;
+        this.nodeDTOs = nodeDTOList;
     }
 
     public Map<NodeDTO, List<EdgeDTO>> getVer_edgeList_map() {
-        return ver_edgeList_map;
+        return node_edgeList_map;
     }
 
     public void setVer_edgeList_map(HashMap<NodeDTO, List<EdgeDTO>> ver_edgeList_map) {
-        this.ver_edgeList_map = ver_edgeList_map;
+        this.node_edgeList_map = ver_edgeList_map;
     }
 
     public String getAppKey() {
@@ -52,11 +70,38 @@ public class GraphDTO {
         this.appKey = appKey;
     }
 
+    //设置起始节点
     public void setRoot(NodeDTO v) {
         v.setParent(null);
         v.setAdjuDist(0);
     }
 
+    /**
+     * @param startIndex dijkstra遍历的起点节点下标
+     * @param destIndex  dijkstra遍历的终点节点下标
+     */
+    public List<NodeDTO> dijkstraTravasal(int startIndex, int destIndex) {
+        NodeDTO start = nodeDTOs.get(startIndex);
+        NodeDTO dest = nodeDTOs.get(destIndex);
+        String path = "[" + dest.getWindow() + "]";
+
+        setRoot(start);
+        updateChildren(nodeDTOs.get(startIndex));
+
+        int shortest_length = dest.getAdjuDist();
+
+        List<NodeDTO> nodeDTOList = new ArrayList<>();
+        while ((dest.getParent() != null) && (!dest.equals(start))) {
+            path = "[" + dest.getParent().getWindow() + "] --> " + path;
+            nodeDTOList.add(dest.getParent());
+            dest = dest.getParent();
+        }
+
+        System.out.println("[" + nodeDTOs.get(startIndex).getWindow() + "] to [" +
+                nodeDTOs.get(destIndex).getWindow() + "] dijkstra shortest path :: " + path);
+        System.out.println("shortest length::" + shortest_length);
+        return nodeDTOList;
+    }
 
     public List<NodeDTO> dijkstraTravasal(NodeDTO start, NodeDTO dest) {
         List<NodeDTO> nodeDTOs = new ArrayList<>();
@@ -90,12 +135,12 @@ public class GraphDTO {
             return;
         }
 
-        if (ver_edgeList_map.get(n) == null || ver_edgeList_map.get(n).size() == 0) {
+        if (node_edgeList_map.get(n) == null || node_edgeList_map.get(n).size() == 0) {
             return;
         }
         //用来保存每个可达的节点
         List<NodeDTO> childrenList = new LinkedList<>();
-        for (EdgeDTO e : ver_edgeList_map.get(n)) {
+        for (EdgeDTO e : node_edgeList_map.get(n)) {
 //            Vertex childVertex = e.getEndVertex();
             NodeDTO nodeDTO = nodeDTOWrapper.wrap(nodeDao.findByWindow(e.getTargetNode()));
 
@@ -124,5 +169,6 @@ public class GraphDTO {
             updateChildren(vc);
         }
     }
+
 
 }

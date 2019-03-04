@@ -30,6 +30,7 @@ public class EdgeController {
     @Autowired
     private EdgeService edgeService;
 
+
     @RequestMapping(value = "/WTG", method = RequestMethod.GET)
     public String getNodeCoverage() throws Exception {
         //插入覆盖的边
@@ -123,10 +124,10 @@ public class EdgeController {
         return sb1.toString();
     }
 
-    @RequestMapping(value = "/path/nextHint/{currentWindow}", method = RequestMethod.POST)
-    public Edge getNextBugHint(@PathVariable String currentWindow, @RequestBody List<EdgeDTO> edgeDTOs) {
+    @RequestMapping(value = "/path/nextHint/{currentWindow}/{nextWindow}", method = RequestMethod.POST)
+    public Edge getNextBugHint(@PathVariable String currentWindow, @PathVariable String nextWindow) {
         String[] infos = currentWindow.split("\\.");
         currentWindow = infos[infos.length-1];
-        return edgeService.getNextBugHint(currentWindow, edgeDTOs);
+        return edgeService.getNextBugHint(currentWindow, nextWindow);
     }
 }

@@ -1,6 +1,5 @@
 package bughunter.bughunterserver.controller;
 
-import bughunter.bughunterserver.DTO.NodeDTO;
 import bughunter.bughunterserver.factory.ResultMessageFactory;
 import bughunter.bughunterserver.model.entity.BugInfo;
 import bughunter.bughunterserver.model.entity.BugInfoKeys;
@@ -23,7 +22,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -231,13 +229,8 @@ public class BugController {
     ResultMessage getRecommendedBugs(HttpServletRequest request, @PathVariable String appKey, @PathVariable String currentWindow) {
         String[] infos = currentWindow.split("\\.");
         currentWindow = infos[infos.length - 1];
-        List<List<NodeDTO>> nodeDTOs = edgeService.getRecommBugs(appKey, currentWindow);
-        List<Edge> edgeList = new ArrayList<>();
-        for (List<NodeDTO> nodeDTOList: nodeDTOs){
-            String targetNode = nodeDTOList.get(nodeDTOList.size()-1).getWindow();
-            List<Edge> edges = edgeService.getBugEdgeBySourceNodeAndTargetNode(currentWindow, targetNode);
-            edgeList.addAll(edges);
-        }
+
+        List<Edge> edgeList = edgeService.getRecommBugs(appKey, currentWindow);
         return ResultMessageFactory.getResultMessage(edgeList);
     }
 
@@ -248,13 +241,7 @@ public class BugController {
         String[] infos = currentWindow.split("\\.");
         currentWindow = infos[infos.length - 1];
 
-        List<List<NodeDTO>> nodeDTOs = edgeService.getRecommActivities(appKey, currentWindow);
-        List<String> messages = new ArrayList<>();
-        for (List<NodeDTO> nodeDTOList: nodeDTOs){
-            String message = "source: "+nodeDTOList.get(nodeDTOList.size()-1).getWindow();
-            messages.add(message);
-        }
-        return ResultMessageFactory.getResultMessage(messages);
+        return null;
     }
 
 }
