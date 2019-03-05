@@ -2,7 +2,7 @@ package bughunter.bughunterserver.DTO;
 
 /**
  * @author sean
- * @date 2019-01-26.
+ * @date 2019-03-05.
  */
 public class NodeDTO {
 
@@ -13,12 +13,25 @@ public class NodeDTO {
     private String appKey;
 
     private String window;
-    //此节点之前是否已知
-    private boolean known;
-    //保存从开始节点到此节点距离
-    private int adjuDist = 0;
-    //当前从初始节点到此节点的最短路径下的父节点
-    private NodeDTO parent;
+
+    private String type;
+
+    private boolean known; //此节点之前是否已知
+    private int adjuDist; //此节点距离
+    private NodeDTO parent; //当前从初始节点到此节点的最短路径下，的父节点。
+
+    public NodeDTO() {
+        this.known = false;
+        this.adjuDist = infinite_dis;
+        this.parent = null;
+    }
+
+    public NodeDTO(String name) {
+        this.known = false;
+        this.adjuDist = infinite_dis;
+        this.parent = null;
+        this.window = name;
+    }
 
     public Long getId() {
         return id;
@@ -42,6 +55,14 @@ public class NodeDTO {
 
     public void setWindow(String window) {
         this.window = window;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public boolean isKnown() {
@@ -68,29 +89,21 @@ public class NodeDTO {
         this.parent = parent;
     }
 
-    public NodeDTO() {
-        this.known = false;
-        this.adjuDist = infinite_dis;
-        this.parent = null;
-    }
-
-    public NodeDTO(String name) {
-        this.known = false;
-        this.adjuDist = infinite_dis;
-        this.parent = null;
-        this.window = name;
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (!(obj instanceof NodeDTO)) {
-            throw new ClassCastException("an object to compare with a Vertext must be Vertex");
+            throw new ClassCastException("an object to compare with a NodeDTO must be NodeDTO");
         }
 
         if (this.window == null) {
-            throw new NullPointerException("name of Vertex to be compared cannot be null");
+            throw new NullPointerException("name of NodeDTO to be compared cannot be null");
         }
 
         return this.window.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return this.getWindow().hashCode();
     }
 }

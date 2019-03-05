@@ -45,48 +45,6 @@ public class EdgeServiceImpl implements EdgeService {
     }
 
 
-    public void quickSort(List<List<NodeDTO>> nodeDTOs) {
-        Qsort(nodeDTOs, 1, nodeDTOs.size() - 1);
-    }
-
-    public void Qsort(List<List<NodeDTO>> NodeDTOs, int low, int high) {
-        int pivot;
-        if (low < high) {
-            //将L[low,high]一分为二,算出枢轴值pivot,该值得位置固定,不用再变化
-            pivot = partition0(NodeDTOs, low, high);
-
-            //对两边的数组分别排序
-            Qsort(NodeDTOs, low, pivot - 1);
-            Qsort(NodeDTOs, pivot + 1, high);
-        }
-    }
-
-    //  选择一个枢轴值(关键字) 把它放到某个位置 使其左边的值都比它小 右边的值都比它大
-    public int partition0(List<List<NodeDTO>> nodeDTOs, int low, int high) {
-        int pivotkey;
-        pivotkey = nodeDTOs.get(low).size();
-        //顺序很重要，要先从右边找
-        while (low < high) {
-            while (low < high && nodeDTOs.get(high).size() >= pivotkey) {  //从后往前找到比key小的放到前面去
-                high--;
-            }
-            swap(nodeDTOs, low, high);
-            while (low < high && nodeDTOs.get(low).size() <= pivotkey) {  //从前往后找到比key大的 放到后面去
-                low++;
-            }
-            swap(nodeDTOs, low, high);
-        } //遍历所有记录  low的位置即为 key所在位置, 且固定,不用再改变
-        return low;
-    }
-
-    //交换数组的两个位置
-    public void swap(List<List<NodeDTO>> nodeDTOs, int i, int j) {
-        List<NodeDTO> temp = nodeDTOs.get(i);
-        nodeDTOs.set(i, nodeDTOs.get(j));
-        nodeDTOs.set(j, temp);
-    }
-
-
     @Override
     public Edge getNextBugHint(String currentWindow, String nextWindow) {
         //按照number降序
@@ -119,31 +77,42 @@ public class EdgeServiceImpl implements EdgeService {
         HashMap<NodeDTO, List<EdgeDTO>> map = new HashMap<>();
         //待测App所有覆盖边的目标节点
         List<Node> nodeList = nodeDao.findByAppKey(appKey);
-        List<String> nodeNames = nodeList.stream().map(node -> node.getWindow()).collect(Collectors.toList());
 
+        List<Edge> edgeList = new ArrayList<>();
         for (Node node : nodeList) {
+            List<Edge> handledEdges = new ArrayList<>();
             //节点对应的有向边
             List<Edge> edges = edgeDao.findBySourceNode(node.getWindow());
-            List<Edge> edgeList = new ArrayList<>();
             //两个节点一个方向下,只能存在一条有向边
             for (Edge edge : edges) {
-                if (edgeList.stream().noneMatch(edge1 -> edge1.getSourceNode().equals(edge.getSourceNode())
+                if (handledEdges.stream().noneMatch(edge1 -> edge1.getSourceNode().equals(edge.getSourceNode())
                         && edge1.getTargetNode().equals(edge.getTargetNode()))) {
                     //去环
-                    if (!edge.getSourceNode().equals(edge.getTargetNode()))
+                    if (!edge.getSourceNode().equals(edge.getTargetNode())) {
                         edgeList.add(edge);
+                        handledEdges.add(edge);
+                    }
+
                 }
             }
-            map.put(nodeDTOWrapper.wrap(node), edgeDTOWrapper.wrap(edgeList));
+            List<Edge> resuleEdge = new ArrayList<>();
+            for (Edge e : handledEdges) {
+                if (edgeList.stream().noneMatch(edge -> edge.getTargetNode().equals(e.getSourceNode())
+                        && edge.getSourceNode().equals(e.getTargetNode()))) {
+                    resuleEdge.add(e);
+                }
+            }
+            map.put(nodeDTOWrapper.wrap(node), edgeDTOWrapper.wrap(resuleEdge));
         }
+
 
         GraphDTO graphDTO = new GraphDTO(nodeDTOWrapper.wrap(nodeList), map, appKey);
 
         List<List<NodeDTO>> recommNodes = new ArrayList<>();
         //寻找测试用例的目标节点集合
-        List<Edge> edgeList = edgeDao.findByAppKeyAndIsCovered(appKey, 1);
+        List<Edge> edgesContainsTC = edgeDao.findByAppKeyAndIsCovered(appKey, 1);
         List<Node> nodes = new ArrayList<>();
-        for (Edge edge : edgeList) {
+        for (Edge edge : edgesContainsTC) {
             Node node = nodeDao.findByWindow(edge.getTargetNode());
             if (nodes.stream().noneMatch(node1 -> node1.equals(node))) {
                 nodes.add(node);
@@ -151,15 +120,17 @@ public class EdgeServiceImpl implements EdgeService {
         }
         //当前节点到目标节点的最短路径
         for (Node n : nodes) {
-            int start = nodeList.indexOf(nodeDao.findByWindow(currentWindow));
-            int dest = nodeList.indexOf(n);
-            List<NodeDTO> nodeDTOs = graphDTO.dijkstraTravasal(start, dest);
-
-            //排除不可达节点
-            //nodeDTOs.size() == 1 && !nodeDTOs.get(0).equals(currNodeDTO);
-            if (nodeDTOs.size() != 1 || nodeDTOs.get(0).equals(currNodeDTO)) {
-                recommNodes.add(nodeDTOs);
+            if (!n.getWindow().equals(currentWindow)){
+                int startIndex = nodeList.indexOf(nodeDao.findByWindow(currentWindow));
+                int destIndex = nodeList.indexOf(n);
+                List<NodeDTO> nodeDTOs = graphDTO.dijkstraTravasal(startIndex, destIndex);
+                //排除不可达节点
+                //nodeDTOs.size() == 1 && !nodeDTOs.get(0).equals(currNodeDTO);
+                if (nodeDTOs.size() != 1 || nodeDTOs.get(0).equals(currNodeDTO)) {
+                    recommNodes.add(nodeDTOs);
+                }
             }
+
         }
 
         List<Edge> results = new ArrayList<>();
@@ -210,4 +181,10 @@ public class EdgeServiceImpl implements EdgeService {
     public List<Edge> getBugEdgeBySourceNodeAndTargetNode(String currentWindow, String window) {
         return edgeDao.findBySourceNodeAndTargetNodeAndIsCoveredOrderByNumber(currentWindow, window, 1);
     }
+
+
+
+
+
+
 }

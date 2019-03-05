@@ -2,15 +2,15 @@ package bughunter.bughunterserver.DTO;
 
 /**
  * @author sean
- * @date 2019-01-26.
+ * @date 2019-03-05.
  */
 public class EdgeDTO {
 
     private Long id;
 
-    private String sourceNode;
+    private NodeDTO sourceNode;
 
-    private String targetNode;
+    private NodeDTO targetNode;
 
     private String eventHandlers;
 
@@ -18,15 +18,11 @@ public class EdgeDTO {
 
     private Integer number;
 
+    private static int weight = 1;
+
     private Integer isCovered;
 
     private String appKey;
-
-    private static int weight = 1;
-    /**
-     * 0:未覆盖
-     * 1:覆盖
-     */
 
     public Long getId() {
         return id;
@@ -36,44 +32,20 @@ public class EdgeDTO {
         this.id = id;
     }
 
-    public String getSourceNode() {
+    public NodeDTO getSourceNode() {
         return sourceNode;
     }
 
-    public void setSourceNode(String sourceNode) {
+    public void setSourceNode(NodeDTO sourceNode) {
         this.sourceNode = sourceNode;
     }
 
-    public String getTargetNode() {
+    public NodeDTO getTargetNode() {
         return targetNode;
     }
 
-    public void setTargetNode(String targetNode) {
+    public void setTargetNode(NodeDTO targetNode) {
         this.targetNode = targetNode;
-    }
-
-    public static int getWeight() {
-        return weight;
-    }
-
-    public static void setWeight(int weight) {
-        EdgeDTO.weight = weight;
-    }
-
-    public Integer getIsCovered() {
-        return isCovered;
-    }
-
-    public void setIsCovered(Integer isCovered) {
-        this.isCovered = isCovered;
-    }
-
-    public String getAppKey() {
-        return appKey;
-    }
-
-    public void setAppKey(String appKey) {
-        this.appKey = appKey;
     }
 
     public String getEventHandlers() {
@@ -98,5 +70,29 @@ public class EdgeDTO {
 
     public void setNumber(Integer number) {
         this.number = number;
+    }
+
+    public static int getWeight() {
+        return weight;
+    }
+
+    public static void setWeight(int weight) {
+        EdgeDTO.weight = weight;
+    }
+
+    public Integer getIsCovered() {
+        return isCovered;
+    }
+
+    public void setIsCovered(Integer isCovered) {
+        this.isCovered = isCovered;
+    }
+
+    public String getAppKey() {
+        return appKey;
+    }
+
+    public void setAppKey(String appKey) {
+        this.appKey = appKey;
     }
 }

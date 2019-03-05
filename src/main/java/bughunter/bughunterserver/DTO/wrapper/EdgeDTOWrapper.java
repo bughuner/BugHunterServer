@@ -1,7 +1,9 @@
 package bughunter.bughunterserver.DTO.wrapper;
 
 import bughunter.bughunterserver.DTO.EdgeDTO;
+import bughunter.bughunterserver.dao.NodeDao;
 import bughunter.bughunterserver.model.entity.Edge;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -11,6 +13,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class EdgeDTOWrapper extends BaseDTOWrapper<EdgeDTO, Edge> {
 
+    @Autowired
+    NodeDao nodeDao;
+
+    @Autowired
+    NodeDTOWrapper nodeDTOWrapper;
+
     @Override
     public EdgeDTO wrap(Edge edge) {
 
@@ -19,9 +27,10 @@ public class EdgeDTOWrapper extends BaseDTOWrapper<EdgeDTO, Edge> {
         edgeDTO.setAppKey(edge.getAppKey());
         edgeDTO.setEventHandlers(edge.getEventHandlers());
         edgeDTO.setIsCovered(edge.getIsCovered());
-        edgeDTO.setSourceNode(edge.getSourceNode());
-        edgeDTO.setTargetNode(edge.getTargetNode());
+        edgeDTO.setSourceNode(nodeDTOWrapper.wrap(nodeDao.findByWindow(edge.getSourceNode())));
+        edgeDTO.setTargetNode(nodeDTOWrapper.wrap(nodeDao.findByWindow(edge.getTargetNode())));
         edgeDTO.setNumber(edge.getNumber());
+        edgeDTO.setWeight(1);
         return edgeDTO;
     }
 
@@ -30,8 +39,8 @@ public class EdgeDTOWrapper extends BaseDTOWrapper<EdgeDTO, Edge> {
         Edge edge = new Edge();
 
         edge.setAppKey(data.getAppKey());
-        edge.setTargetNode(data.getTargetNode());
-        edge.setSourceNode(data.getSourceNode());
+        edge.setTargetNode(data.getTargetNode().getWindow());
+        edge.setSourceNode(data.getSourceNode().getWindow());
         edge.setEventHandlers(data.getEventHandlers());
         edge.setIsCovered(data.getIsCovered());
         edge.setNumber(data.getNumber());

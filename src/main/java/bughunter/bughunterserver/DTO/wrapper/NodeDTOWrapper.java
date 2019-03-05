@@ -10,14 +10,14 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class NodeDTOWrapper extends BaseDTOWrapper<NodeDTO, Node> {
+
     @Override
     public NodeDTO wrap(Node node) {
         NodeDTO nodeDTO = new NodeDTO();
         nodeDTO.setId(node.getId());
         nodeDTO.setAppKey(node.getAppKey());
         nodeDTO.setWindow(node.getWindow());
-
-        nodeDTO.setAdjuDist(0);
+        nodeDTO.setAdjuDist(Integer.MAX_VALUE);
         nodeDTO.setKnown(false);
         nodeDTO.setParent(null);
         return nodeDTO;

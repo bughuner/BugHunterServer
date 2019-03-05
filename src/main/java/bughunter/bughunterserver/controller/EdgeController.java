@@ -1,6 +1,5 @@
 package bughunter.bughunterserver.controller;
 
-import bughunter.bughunterserver.DTO.EdgeDTO;
 import bughunter.bughunterserver.model.entity.Edge;
 import bughunter.bughunterserver.service.EdgeService;
 import bughunter.bughunterserver.service.NodeService;
