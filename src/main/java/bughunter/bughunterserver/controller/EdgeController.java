@@ -5,11 +5,16 @@ import bughunter.bughunterserver.service.EdgeService;
 import bughunter.bughunterserver.service.NodeService;
 import bughunter.bughunterserver.vo.EdgeVO;
 import bughunter.bughunterserver.wrapper.EdgeVOWrapper;
-import com.oracle.tools.packager.Log;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,7 +55,7 @@ public class EdgeController {
              * 3activityBeforeAction":".activity.MainActivity
              * 4activityAfterAction":".Launcher"}
              * */
-            Log.info(temp2);
+//            Log.info(temp2);
             String[] strings = temp2.split("\",\"");
             String activityAfterInfo = strings[4];
             String activityBeforeInfo = strings[3];
@@ -126,7 +131,7 @@ public class EdgeController {
     @RequestMapping(value = "/path/nextHint/{currentWindow}/{nextWindow}", method = RequestMethod.POST)
     public Edge getNextBugHint(@PathVariable String currentWindow, @PathVariable String nextWindow) {
         String[] infos = currentWindow.split("\\.");
-        currentWindow = infos[infos.length-1];
+        currentWindow = infos[infos.length - 1];
         return edgeService.getNextBugHint(currentWindow, nextWindow);
     }
 }
