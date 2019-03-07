@@ -1,16 +1,16 @@
 package bughunter.bughunterserver.controller;
 
+import bughunter.bughunterserver.factory.ResultMessageFactory;
 import bughunter.bughunterserver.model.entity.Edge;
 import bughunter.bughunterserver.service.EdgeService;
 import bughunter.bughunterserver.service.NodeService;
 import bughunter.bughunterserver.vo.EdgeVO;
+import bughunter.bughunterserver.vo.ResultMessage;
 import bughunter.bughunterserver.wrapper.EdgeVOWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -129,9 +129,19 @@ public class EdgeController {
     }
 
     @RequestMapping(value = "/path/nextHint/{currentWindow}/{nextWindow}", method = RequestMethod.POST)
-    public Edge getNextBugHint(@PathVariable String currentWindow, @PathVariable String nextWindow) {
+    public
+    @ResponseBody
+    ResultMessage getNextBugHint(@PathVariable String currentWindow, @PathVariable String nextWindow) {
         String[] infos = currentWindow.split("\\.");
         currentWindow = infos[infos.length - 1];
-        return edgeService.getNextBugHint(currentWindow, nextWindow);
+        return ResultMessageFactory.getResultMessage(edgeService.getNextBugHint(currentWindow, nextWindow));
     }
+
+    @RequestMapping(value = "/edge/{id}", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    ResultMessage updateEdgeInfo(HttpServletRequest request, @PathVariable Long id){
+        return ResultMessageFactory.getResultMessage(edgeService.updateEdge(id));
+    }
+
 }

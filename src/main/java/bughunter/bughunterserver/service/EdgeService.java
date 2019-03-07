@@ -22,4 +22,6 @@ public interface EdgeService {
     List<Edge> getRecommActivities(String appKey, String currentWindow);
 
     List<Edge> getBugEdgeBySourceNodeAndTargetNode(String currentWindow, String window);
+
+    Edge updateEdge(Long id);
 }

@@ -287,5 +287,11 @@ public class EdgeServiceImpl implements EdgeService {
         }
     }
 
-
+    @Override
+    public Edge updateEdge(Long id) {
+        Edge edge = edgeDao.findOne(id);
+        edge.setNumber(edge.getNumber() + 1);
+        edge = edgeDao.save(edge);
+        return edge;
+    }
 }
