@@ -15,7 +15,7 @@ public interface EdgeService {
 
     Edge getNextBugHint(String currentWindow, String nextWindow);
 
-    List<Edge> getRecommBugs(String appKey, String currentWindow);
+    List<String> getRecommBugs(String appKey, String currentWindow, Integer isCovered);
 
     List<Edge> getEdgeBySourceNodeAndTargetNode(String sourceNode, String targetNode);
 

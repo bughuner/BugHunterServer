@@ -111,4 +111,9 @@ public class Edge {
     public void setNumber(Integer number) {
         this.number = number;
     }
+
+    @Override
+    public String toString() {
+        return id + ":" + sourceNode + "->" + targetNode + ":" + eventHandlers;
+    }
 }

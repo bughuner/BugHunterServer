@@ -2,9 +2,10 @@ package bughunter.bughunterserver.DTO;
 
 /**
  * @author sean
- * @date 2019-03-05.
+ * @date 2019-03-06.
  */
 public class NodeDTO {
+
 
     private final static int infinite_dis = Integer.MAX_VALUE;
 
@@ -18,7 +19,7 @@ public class NodeDTO {
 
     private boolean known; //此节点之前是否已知
     private int adjuDist; //此节点距离
-    private NodeDTO parent; //当前从初始节点到此节点的最短路径下，的父节点。
+    private String parent; //当前从初始节点到此节点的最短路径下，的父节点。
 
     public NodeDTO() {
         this.known = false;
@@ -81,11 +82,11 @@ public class NodeDTO {
         this.adjuDist = adjuDist;
     }
 
-    public NodeDTO getParent() {
+    public String getParent() {
         return parent;
     }
 
-    public void setParent(NodeDTO parent) {
+    public void setParent(String parent) {
         this.parent = parent;
     }
 
@@ -99,11 +100,12 @@ public class NodeDTO {
             throw new NullPointerException("name of NodeDTO to be compared cannot be null");
         }
 
-        return this.window.equals(obj);
+        return this.window.equals(((NodeDTO) obj).getWindow());
     }
 
     @Override
     public int hashCode() {
         return this.getWindow().hashCode();
     }
+
 }

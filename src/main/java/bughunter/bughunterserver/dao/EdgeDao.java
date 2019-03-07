@@ -15,11 +15,12 @@ import java.util.List;
 @Transactional
 public interface EdgeDao extends CrudRepository<Edge, Long> {
 
-    List<Edge> findByAppKeyAndIsCovered(String appKey, Integer isCovered);
+    @Query("SELECT e FROM Edge e WHERE e.appKey = :appKey " +
+            "AND e.isCovered = :isCovered " +
+            "ORDER BY e.number DESC")
+    List<Edge> findByAppKeyAndIsCovered(@Param("appKey") String appKey,
+                                        @Param("isCovered") Integer isCovered);
 
-    List<Edge> findByAppKeyAndSourceNode(String appKey, String sourceNode);
-
-    List<Edge> findByAppKeyAndTargetNode(String appKey, String window);
 
     @Query("SELECT e FROM Edge e WHERE e.sourceNode = :sourceWindow " +
             "AND e.targetNode = :targetWindow " +

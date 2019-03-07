@@ -2,7 +2,7 @@ package bughunter.bughunterserver.DTO;
 
 /**
  * @author sean
- * @date 2019-03-05.
+ * @date 2019-03-06.
  */
 public class EdgeDTO {
 
@@ -95,4 +95,5 @@ public class EdgeDTO {
     public void setAppKey(String appKey) {
         this.appKey = appKey;
     }
+
 }

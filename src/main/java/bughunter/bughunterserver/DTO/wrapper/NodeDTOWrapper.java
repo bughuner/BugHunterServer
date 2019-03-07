@@ -29,6 +29,9 @@ public class NodeDTOWrapper extends BaseDTOWrapper<NodeDTO, Node> {
         node.setId(data.getId());
         node.setWindow(data.getWindow());
         node.setAppKey(data.getAppKey());
+        node.setAdjuDist(data.getAdjuDist());
+        node.setKnown(data.isKnown());
+        node.setParent(data.getParent());
         return node;
     }
 }
