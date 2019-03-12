@@ -1,8 +1,11 @@
 package bughunter.bughunterserver.wrapper;
 
+import bughunter.bughunterserver.constants.ConverterMessage;
 import bughunter.bughunterserver.model.entity.Edge;
 import bughunter.bughunterserver.vo.EdgeVO;
 import org.springframework.stereotype.Service;
+
+import java.sql.Timestamp;
 
 /**
  * @author sean
@@ -17,11 +20,14 @@ public class EdgeVOWrapper extends BaseWrapper<EdgeVO, Edge> {
         edgeVO.setId(edge.getId());
         edgeVO.setSourceNode(edge.getSourceNode());
         edgeVO.setTargetNode(edge.getTargetNode());
-        edgeVO.setEventHandlers(edge.getEventHandlers());
-        edgeVO.setIsCovered(edge.getIsCovered());
+        edgeVO.setEventHandlers(ConverterMessage.convertMessage(edge.getEventHandlers()));
+        edgeVO.setDataType(edge.getDataType());
         edgeVO.setAppKey(edge.getAppKey());
         edgeVO.setEventType(edge.getEventType());
         edgeVO.setNumber(edge.getNumber());
+        edgeVO.setCreateTime(edge.getCreateTime().toString());
+        edgeVO.setAssistTime(edge.getAssistTime());
+        edgeVO.setMessage(edge.getMessage());
         return edgeVO;
     }
 
@@ -32,9 +38,13 @@ public class EdgeVOWrapper extends BaseWrapper<EdgeVO, Edge> {
         edge.setTargetNode(data.getTargetNode());
         edge.setEventHandlers(data.getEventHandlers());
         edge.setEventType(data.getEventType());
-        edge.setIsCovered(data.getIsCovered());
+        edge.setDataType(data.getDataType());
         edge.setAppKey(data.getAppKey());
         edge.setNumber(data.getNumber());
+        edge.setCreateTime(Timestamp.valueOf(data.getCreateTime()));
+        edge.setAssistTime(data.getAssistTime());
+        edge.setMessage(data.getMessage());
+
         return edge;
     }
 }

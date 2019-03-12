@@ -1,6 +1,7 @@
 package bughunter.bughunterserver.model.entity;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 
 /**
  * @author sean
@@ -31,14 +32,24 @@ public class Edge {
 
     private static int weight = 1;
     /**
-     * 0:未覆盖
-     * 1:覆盖
+     * 0:操作序列
+     * 1:测试异常
+     * 2:GATOR
      */
-    @Column(name = "is_covered")
-    private Integer isCovered;
+    @Column(name = "data_type")
+    private Integer dataType;
 
     @Column(name = "app_key")
     private String appKey;
+
+    @Column(name = "create_time")
+    private Timestamp createTime;
+
+    @Column(name = "assist_time")
+    private Integer assistTime;
+
+    @Column(name = "message")
+    private String message = "Exception";
 
     public Long getId() {
         return id;
@@ -72,12 +83,12 @@ public class Edge {
         this.eventHandlers = eventHandlers;
     }
 
-    public Integer getIsCovered() {
-        return isCovered;
+    public Integer getDataType() {
+        return dataType;
     }
 
-    public void setIsCovered(Integer isCovered) {
-        this.isCovered = isCovered;
+    public void setDataType(Integer dataType) {
+        this.dataType = dataType;
     }
 
     public String getAppKey() {
@@ -111,6 +122,31 @@ public class Edge {
     public void setNumber(Integer number) {
         this.number = number;
     }
+
+    public Timestamp getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Timestamp createTime) {
+        this.createTime = createTime;
+    }
+
+    public Integer getAssistTime() {
+        return assistTime;
+    }
+
+    public void setAssistTime(Integer assistTime) {
+        this.assistTime = assistTime;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
 
     @Override
     public String toString() {

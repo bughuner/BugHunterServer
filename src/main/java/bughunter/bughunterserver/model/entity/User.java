@@ -2,15 +2,15 @@ package bughunter.bughunterserver.model.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.sql.Date;
 import java.sql.Timestamp;
 
 @Entity(name = "user")
 public class User {
 
-    private int id;
+    @Id
+    @GeneratedValue
+    private Integer id;
 
     private String name;
 
@@ -24,8 +24,6 @@ public class User {
 
     private int status;
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public int getId() {
         return id;
     }

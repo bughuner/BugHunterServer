@@ -6,6 +6,7 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
 import javax.transaction.Transactional;
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -16,10 +17,10 @@ import java.util.List;
 public interface EdgeDao extends CrudRepository<Edge, Long> {
 
     @Query("SELECT e FROM Edge e WHERE e.appKey = :appKey " +
-            "AND e.isCovered = :isCovered " +
+            "AND e.dataType = :dataType " +
             "ORDER BY e.number DESC")
-    List<Edge> findByAppKeyAndIsCovered(@Param("appKey") String appKey,
-                                        @Param("isCovered") Integer isCovered);
+    List<Edge> findByAppKeyAndDataType(@Param("appKey") String appKey,
+                                       @Param("dataType") Integer dateType);
 
 
     @Query("SELECT e FROM Edge e WHERE e.sourceNode = :sourceWindow " +
@@ -34,14 +35,19 @@ public interface EdgeDao extends CrudRepository<Edge, Long> {
 
     @Query("select e from Edge e where e.sourceNode = :sourceWindow " +
             "and e.targetNode = :targetWindow" +
-            " and e.isCovered = :i " +
-            "and e.number < 5 order by number DESC")
-    List<Edge> findBySourceNodeAndTargetNodeAndIsCoveredOrderByNumber(
+            " and e.dataType = :dataType " +
+            "and e.number < 5 " +
+            "ORDER BY e.number DESC")
+    List<Edge> findBySourceNodeAndTargetNodeAndDataTypeOrderByNumber(
             @Param("sourceWindow") String sourceWindow,
             @Param("targetWindow") String targetWindow,
-            @Param("i") int i);
+            @Param("dataType") int i);
 
     List<Edge> findByAppKey(String appKey);
 
     List<Edge> findBySourceNode(String window);
+
+    Edge findByCreateTime(Timestamp createTime);
+
+    Edge findByCreateTimeAndAssistTime(Timestamp createTime, int standard);
 }

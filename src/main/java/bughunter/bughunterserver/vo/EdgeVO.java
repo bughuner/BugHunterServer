@@ -18,9 +18,17 @@ public class EdgeVO {
 
     private Integer number;
 
-    private Integer isCovered;
+    private Integer dataType;
 
     private String appKey;
+
+    private String createTime;
+
+    private Integer assistTime;
+
+    private String message;
+
+    private String path;
 
     public Long getId() {
         return id;
@@ -70,12 +78,12 @@ public class EdgeVO {
         this.number = number;
     }
 
-    public Integer getIsCovered() {
-        return isCovered;
+    public Integer getDataType() {
+        return dataType;
     }
 
-    public void setIsCovered(Integer isCovered) {
-        this.isCovered = isCovered;
+    public void setDataType(Integer dataType) {
+        this.dataType = dataType;
     }
 
     public String getAppKey() {
@@ -84,6 +92,38 @@ public class EdgeVO {
 
     public void setAppKey(String appKey) {
         this.appKey = appKey;
+    }
+
+    public String getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(String createTime) {
+        this.createTime = createTime;
+    }
+
+    public Integer getAssistTime() {
+        return assistTime;
+    }
+
+    public void setAssistTime(Integer assistTime) {
+        this.assistTime = assistTime;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }
 

@@ -222,15 +222,16 @@ public class BugController {
     }
 
 
-    @RequestMapping(value = "/{appKey}/{currentWindow}/bugList/{isCovered}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{appKey}/{currentWindow}/bugList/{isCovered}/{userId}", method = RequestMethod.GET)
     public
     @ResponseBody
     ResultMessage getRecommendedBugs(HttpServletRequest request, @PathVariable String appKey,
-                                     @PathVariable String currentWindow, @PathVariable Integer isCovered) {
+                                     @PathVariable String currentWindow, @PathVariable Integer isCovered,
+                                     @PathVariable Integer userId) {
         String[] infos = currentWindow.split("\\.");
         currentWindow = infos[infos.length - 1];
 
-        List<String> messages = edgeService.getRecommBugs(appKey, currentWindow, isCovered);
+        List<EdgeVO> messages = edgeService.getRecommBugs(appKey, currentWindow, isCovered, userId);
         return ResultMessageFactory.getResultMessage(messages);
     }
 
