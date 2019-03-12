@@ -51,6 +51,9 @@ public class Edge {
     @Column(name = "message")
     private String message = "Exception";
 
+    @Column(name = "image_url")
+    private String imageUrl = "test";
+
     public Long getId() {
         return id;
     }
@@ -147,6 +150,13 @@ public class Edge {
         this.message = message;
     }
 
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     @Override
     public String toString() {

@@ -30,6 +30,8 @@ public class EdgeVO {
 
     private String path;
 
+    private String imageUrl;
+
     public Long getId() {
         return id;
     }
@@ -124,6 +126,14 @@ public class EdgeVO {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 }
 

@@ -28,6 +28,7 @@ public class EdgeVOWrapper extends BaseWrapper<EdgeVO, Edge> {
         edgeVO.setCreateTime(edge.getCreateTime().toString());
         edgeVO.setAssistTime(edge.getAssistTime());
         edgeVO.setMessage(edge.getMessage());
+        edgeVO.setImageUrl(edge.getImageUrl());
         return edgeVO;
     }
 
@@ -44,7 +45,7 @@ public class EdgeVOWrapper extends BaseWrapper<EdgeVO, Edge> {
         edge.setCreateTime(Timestamp.valueOf(data.getCreateTime()));
         edge.setAssistTime(data.getAssistTime());
         edge.setMessage(data.getMessage());
-
+        edge.setImageUrl(data.getImageUrl());
         return edge;
     }
 }
