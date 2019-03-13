@@ -151,13 +151,15 @@ public class EdgeController {
 
 //    @RequestMapping
 
-    @RequestMapping(value = "/path/nextHint/{currentWindow}/{nextWindow}", method = RequestMethod.POST)
+    @RequestMapping(value = "/path/nextHint/{currentWindow}/{nextWindow}/{edgeId}", method = RequestMethod.POST)
     public
     @ResponseBody
-    ResultMessage getNextBugHint(@PathVariable String currentWindow, @PathVariable String nextWindow) {
+    ResultMessage getNextBugHint(@PathVariable String currentWindow,
+                                 @PathVariable String nextWindow,
+                                 @PathVariable Long edgeId) {
         String[] infos = currentWindow.split("\\.");
         currentWindow = infos[infos.length - 1];
-        return ResultMessageFactory.getResultMessage(edgeService.getNextBugHint(currentWindow, nextWindow));
+        return ResultMessageFactory.getResultMessage(edgeService.getNextBugHint(currentWindow, nextWindow, edgeId));
     }
 
     @RequestMapping(value = "/edge/{edgeId}/{userId}", method = RequestMethod.GET)

@@ -47,28 +47,11 @@ public class EdgeServiceImpl implements EdgeService {
 
 
     @Override
-    public Edge getNextBugHint(String currentWindow, String nextWindow) {
-        //按照number降序
-        List<Edge> edgeList =
-                edgeDao.findBySourceNodeAndTargetNodeOrderByNumber(currentWindow, nextWindow);
-        //存在isCovered为1的Edge
-        if (edgeList.stream().
-                anyMatch(edge -> edge.getDataType() == 1)) {
-            //从isCovered中选
-            List<Edge> coveredEdges = edgeList.stream().
-                    filter(edge -> edge.getDataType() == 1).collect(Collectors.toList());
-            return coveredEdges.get(0);
-        } else {
-            //初始情况,所有number都为0
-            if (edgeList.stream().allMatch(edge -> edge.getNumber() == 0)) {
-                //随机选择
-                return edgeList.get((int) (0 + Math.random() * (edgeList.size() - 0 + 0)));
-            } else {
-                //按number降序中,选择小于60%人数且最大的
-                edgeList.stream().filter(edge -> edge.getNumber() <= 0.6 * CROWD_WORKER_NUMBER);
-                return edgeList.get(0);
-            }
-        }
+    public Edge getNextBugHint(String currentWindow, String nextWindow, Long edgeId) {
+        List<Edge> edges = edgeDao.findBySourceNodeAndTargetNode(currentWindow, nextWindow);
+        edges = edges.stream().filter(edge -> edge.getId()<edgeId).collect(Collectors.toList());
+        edges.sort((x, y) -> Integer.compare(x.getNumber(), y.getNumber()));//这方法需要jdk1.8以上
+        return edges.get(edges.size()-1);
     }
 
     @Override
