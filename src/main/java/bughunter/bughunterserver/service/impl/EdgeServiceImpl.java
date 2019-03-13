@@ -134,14 +134,15 @@ public class EdgeServiceImpl implements EdgeService {
 
         List<EdgeVO> results = new ArrayList<>();
         List<EdgeVO> resultSelfEdges = new ArrayList<>();
-        //先是自身到自身的边
+        //先是当前页面自身到自身的边
         List<Edge> selfEdges = edgeDao.findBySourceNodeAndTargetNodeAndDataTypeOrderByNumber
                 (currentWindow, currentWindow, isCovered);
         if (selfEdges != null && selfEdges.size() != 0) {
             for (Edge edge : selfEdges) {
                 EdgeVO edgeVO = edgeVOWrapper.wrap(edge);
                 edgeVO.setPath(currentWindow + "->" + currentWindow);
-                resultSelfEdges.add(edgeVO);
+                if (edge2UserDao.findByUserIdAndEdgeId(userId, edge.getId()) == null)
+                    resultSelfEdges.add(edgeVO);
             }
         }
         int selfSize = resultSelfEdges.size();
@@ -169,8 +170,8 @@ public class EdgeServiceImpl implements EdgeService {
                     Node sourceNode;
                     Node targetNode;
 
+                    //可达节点自身到自身的边
                     if (nodePath.size() == 1 && nodePath.get(0).equals(currNode)) {
-                        //起始节点自身存在环的情况
                         sourceNode = currNode;
                         targetNode = currNode;
                     } else {
@@ -182,6 +183,7 @@ public class EdgeServiceImpl implements EdgeService {
                             sourceNode.getWindow(), targetNode.getWindow(), isCovered);
                     recommEdges.stream().filter(edge -> edge.getNumber() < 0.6 * CROWD_WORKER_NUMBER);
 
+                    //该用户还没验证过
                     for (Edge e : recommEdges) {
                         if (edge2UserDao.findByUserIdAndEdgeId(userId, e.getId()) == null) {
                             EdgeVO edgeVO = edgeVOWrapper.wrap(e);
@@ -192,6 +194,7 @@ public class EdgeServiceImpl implements EdgeService {
 
                 }
             }
+
             if (resultEdges.size() == 0 && resultEdges == null) {
                 List<Edge> edges = edgeDao.findByAppKeyAndDataType(appKey, isCovered);
                 for (Edge e : edges) {
@@ -204,11 +207,11 @@ public class EdgeServiceImpl implements EdgeService {
                 }
             }
             resultEdges.sort((x, y) -> Integer.compare(x.getNumber(), y.getNumber()));
-            if (resultEdges.size()>size){
+            if (resultEdges.size() > size) {
                 for (int i = 0; i < size; i++) {
                     results.add(resultEdges.get(resultEdges.size() - 1 - i));
                 }
-            }else
+            } else
                 results.addAll(resultEdges);
 
         }
