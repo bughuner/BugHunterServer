@@ -160,10 +160,10 @@ public class EdgeController {
         return ResultMessageFactory.getResultMessage(edgeService.getNextBugHint(currentWindow, nextWindow));
     }
 
-    @RequestMapping(value = "/edge/{edgeId}/{userId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/edge/{edgeId}/{userId}", method = RequestMethod.GET)
     public
     @ResponseBody
-    ResultMessage updateEdgeInfo(HttpServletRequest request,
+    ResultMessage updateEdgeInfo(HttpServletRequest requgest,
                                  @PathVariable Long edgeId, @PathVariable Integer userId) {
         Edge2User edge2User = new Edge2User();
         edge2User.setEdgeId(edgeId);

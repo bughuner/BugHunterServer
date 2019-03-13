@@ -8,14 +8,14 @@ public class ConverterMessage {
 
     public static String convertMessage(String message) {
         if (message.equals("Click Home button because has tried more than 3 times")) {
-            return "多次返回无响应,请回到桌面";
+            return "多次返回无响应,回到桌面";
         } else if (message.equals("Click Return button because this page has done")) {
-            return "页面结束,请按返回键";
+            return "页面结束,按返回键";
         } else if (message.contains("_")) {
             String[] ms = message.split("\\/");
             String[] ms2 = ms[1].split("\\, ");
             message = ms2[0];
-            StringBuffer stringBuffer = new StringBuffer("请点击");
+            StringBuffer stringBuffer = new StringBuffer("点击");
             if (message.split("\\_").length != 0) {
 
                 if (message.contains("_fab"))
