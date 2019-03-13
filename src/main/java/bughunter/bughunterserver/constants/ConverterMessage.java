@@ -11,7 +11,7 @@ public class ConverterMessage {
             return "多次返回无响应,回到桌面";
         } else if (message.equals("Click Return button because this page has done")) {
             return "页面结束,按返回键";
-        } else if (message.contains("_")) {
+        } else if (message.contains("_") && !message.contains("implicit")) {
             String[] ms = message.split("\\/");
             String[] ms2 = ms[1].split("\\, ");
             message = ms2[0];
@@ -66,8 +66,18 @@ public class ConverterMessage {
                 stringBuffer.append("文本框");
 
             return stringBuffer.toString();
+        } else if (message.equals("click")) {
+            message = "尚待探索的页面";
+        } else if (message.equals("implicit_back_event")){
+            message = "返回按钮";
+        }else if (message.equals("implicit_power_event")){
+            message = "低电量模式测试";
+        }else if (message.equals("implicit_launch_event")){
+            message = "回到手机主页";
+        } else {
+            return message;
         }
-        return null;
+        return message;
     }
 
 

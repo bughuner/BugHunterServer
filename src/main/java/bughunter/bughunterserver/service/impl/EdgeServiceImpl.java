@@ -186,7 +186,6 @@ public class EdgeServiceImpl implements EdgeService {
                         edgeVO.setPath(e.getSourceNode() + "->" + e.getTargetNode());
                         resultEdges.add(edgeVO);
                     }
-
                 }
             }
             resultEdges.sort((x, y) -> Integer.compare(x.getNumber(), y.getNumber()));
@@ -197,6 +196,13 @@ public class EdgeServiceImpl implements EdgeService {
             } else
                 results.addAll(resultEdges);
 
+            if (isCovered == 0&& resultEdges.size()<5){
+                List<EdgeVO> edges = edgeVOWrapper.wrap(edgeDao.findByAppKeyAndDataType(appKey, 0));
+                for (EdgeVO edgeVO: edges){
+                    edgeVO.setPath(edgeVO.getSourceNode());
+                }
+                results = edges;
+            }
         }
 
 
