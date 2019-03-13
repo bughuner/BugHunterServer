@@ -199,7 +199,7 @@ public class EdgeServiceImpl implements EdgeService {
             if (isCovered == 0&& resultEdges.size()<5){
                 List<EdgeVO> edges = edgeVOWrapper.wrap(edgeDao.findByAppKeyAndDataType(appKey, 0));
                 for (EdgeVO edgeVO: edges){
-                    edgeVO.setPath(edgeVO.getSourceNode());
+                    edgeVO.setPath(edgeVO.getSourceNode()+"->"+edgeVO.getTargetNode());
                 }
                 results = edges;
             }
