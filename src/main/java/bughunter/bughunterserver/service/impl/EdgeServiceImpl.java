@@ -56,167 +56,167 @@ public class EdgeServiceImpl implements EdgeService {
 
     @Override
     public List<EdgeVO> getRecommBugs(String appKey, String currentWindow, Integer isCovered, Integer userId) {
-//        List<Edge> edges = edgeDao.findByAppKeyAndDataType(appKey, isCovered);
-//        List<EdgeVO> edgeVOs = new ArrayList<>();
-//        for(Edge e: edges){
-//            EdgeVO edgeVO = edgeVOWrapper.wrap(e);
-//            edgeVO.setPath(e.getSourceNode() + " -> " +e.getTargetNode());
+        List<Edge> edges = edgeDao.findByAppKeyAndDataType(appKey, isCovered);
+        List<EdgeVO> edgeVOs = new ArrayList<>();
+        for(Edge e: edges){
+            EdgeVO edgeVO = edgeVOWrapper.wrap(e);
+            edgeVO.setPath(e.getSourceNode() + " -> " +e.getTargetNode());
+        }
+        return edgeVOWrapper.wrap(edges);
+
+//        //当前用户所在节点
+//        Node currNode = nodeDao.findByWindow(currentWindow);
+//        HashMap<Node, List<Edge>> map = new HashMap<>();
+//        //待测App所有覆盖边的目标节点
+//        List<Node> nodeList = nodeDao.findByAppKey(appKey);
+//
+//        List<Edge> edgeList = new ArrayList<>();
+//        for (Node node : nodeList) {
+//            List<Edge> handledEdges = new ArrayList<>();
+//            //节点对应的有向边
+//            List<Edge> edges = edgeDao.findBySourceNode(node.getWindow());
+//            //两个节点一个方向下,只能存在一条有向边
+//            for (Edge edge : edges) {
+//                if (handledEdges.stream().noneMatch(edge1 -> edge1.getSourceNode().equals(edge.getSourceNode())
+//                        && edge1.getTargetNode().equals(edge.getTargetNode()))) {
+//                    //去环
+//                    if (!edge.getSourceNode().equals(edge.getTargetNode())) {
+//                        edgeList.add(edge);
+//                        handledEdges.add(edge);
+//                    }
+//
+//                }
+//            }
+//            List<Edge> resuleEdge = new ArrayList<>();
+//            for (Edge e : handledEdges) {
+//                if (edgeList.stream().noneMatch(edge -> edge.getTargetNode().equals(e.getSourceNode())
+//                        && edge.getSourceNode().equals(e.getTargetNode()))) {
+//                    resuleEdge.add(e);
+//                }
+//            }
+//            map.put(node, resuleEdge);
 //        }
-//        return edgeVOWrapper.wrap(edges);
-
-        //当前用户所在节点
-        Node currNode = nodeDao.findByWindow(currentWindow);
-        HashMap<Node, List<Edge>> map = new HashMap<>();
-        //待测App所有覆盖边的目标节点
-        List<Node> nodeList = nodeDao.findByAppKey(appKey);
-
-        List<Edge> edgeList = new ArrayList<>();
-        for (Node node : nodeList) {
-            List<Edge> handledEdges = new ArrayList<>();
-            //节点对应的有向边
-            List<Edge> edges = edgeDao.findBySourceNode(node.getWindow());
-            //两个节点一个方向下,只能存在一条有向边
-            for (Edge edge : edges) {
-                if (handledEdges.stream().noneMatch(edge1 -> edge1.getSourceNode().equals(edge.getSourceNode())
-                        && edge1.getTargetNode().equals(edge.getTargetNode()))) {
-                    //去环
-                    if (!edge.getSourceNode().equals(edge.getTargetNode())) {
-                        edgeList.add(edge);
-                        handledEdges.add(edge);
-                    }
-
-                }
-            }
-            List<Edge> resuleEdge = new ArrayList<>();
-            for (Edge e : handledEdges) {
-                if (edgeList.stream().noneMatch(edge -> edge.getTargetNode().equals(e.getSourceNode())
-                        && edge.getSourceNode().equals(e.getTargetNode()))) {
-                    resuleEdge.add(e);
-                }
-            }
-            map.put(node, resuleEdge);
-        }
-
-        GraphDTO graphDTO = new GraphDTO(nodeList, map, appKey);
-
-        List<List<Node>> recommNodes = new ArrayList<>();
-        //寻找测试用例/普通跳转
-        List<Edge> edgesContainsTC = edgeDao.findByAppKeyAndDataType(appKey, isCovered);
-        List<Node> nodes = new ArrayList<>();
-        for (Edge edge : edgesContainsTC) {
-            Node node = nodeDao.findByWindow(edge.getTargetNode());
-            if (nodes.stream().noneMatch(node1 -> node1.equals(node))) {
-                nodes.add(node);
-            }
-        }
-        //当前节点到目标节点的最短路径
-        List<Edge> targetEdges =  edgeDao.findByAppKeyAndDataType(appKey, isCovered);
-        List<String> destNodes = targetEdges.stream().map(edge -> edge.getSourceNode()).collect(Collectors.toList());
-        for (String n: destNodes) {
-            if (!n.equals(currentWindow)) {
-                int startIndex = nodeList.indexOf(nodeDao.findByWindow(currentWindow));
-                int destIndex = nodeList.indexOf(nodeDao.findByWindow(n));
-                List<Node> pathNodes = dijkstraTravasal(startIndex, destIndex, graphDTO);
-                //排除不可达节点
-                if (pathNodes.size() != 1 || pathNodes.get(0).equals(currNode)) {
-                    recommNodes.add(pathNodes);
-                }
-            }
-
-        }
-
-        List<EdgeVO> results = new ArrayList<>();
-        List<EdgeVO> resultSelfEdges = new ArrayList<>();
-        //先是当前页面自身到自身的边
-        List<Edge> selfEdges = edgeDao.findBySourceNodeAndTargetNodeAndDataTypeOrderByNumber
-                (currentWindow, currentWindow, isCovered);
-        if (selfEdges != null && selfEdges.size() != 0) {
-            for (Edge edge : selfEdges) {
-                EdgeVO edgeVO = edgeVOWrapper.wrap(edge);
-                edgeVO.setPath(currentWindow + "->" + currentWindow);
-                if (edge2UserDao.findByUserIdAndEdgeId(userId, edge.getId()) == null)
-                    resultSelfEdges.add(edgeVO);
-            }
-        }
-        int selfSize = resultSelfEdges.size();
-        int size = 5 - selfSize;
-        resultSelfEdges.sort((x, y) -> Integer.compare(x.getNumber(), y.getNumber()));//这方法需要jdk1.8以上
-        if (selfSize >= 5) {
-            results.add(resultSelfEdges.get(selfSize - 1));
-            results.add(resultSelfEdges.get(selfSize - 2));
-            results.add(resultSelfEdges.get(selfSize - 3));
-            results.add(resultSelfEdges.get(selfSize - 4));
-            results.add(resultSelfEdges.get(selfSize - 5));
-        } else {
-            results.addAll(resultSelfEdges);
-
-            List<EdgeVO> resultEdges = new ArrayList<>();
-            for (List<Node> nodePath : recommNodes) {
-                StringBuilder temp = new StringBuilder();
-                for (Node node : nodePath) {
-                    temp.append(node.getWindow() + "->");
-                }
-                String path = temp.toString().substring(0, temp.length() - 3);
-                //排除不可达节点
-                if (nodePath.size() != 1 || nodePath.get(0).equals(currNode)) {
-                    List<Edge> recommEdges;
-                    Node sourceNode;
-                    Node targetNode;
-
-                    //可达节点自身到自身的边
-                    if (nodePath.size() == 1 && nodePath.get(0).equals(currNode)) {
-                        sourceNode = currNode;
-                        targetNode = currNode;
-                    } else {
-                        //正常情况
-                        sourceNode = nodePath.get(nodePath.size() - 2);
-                        targetNode = nodePath.get(nodePath.size() - 1);
-                    }
-                    recommEdges = edgeDao.findBySourceNodeAndTargetNodeAndDataTypeOrderByNumber(
-                            sourceNode.getWindow(), targetNode.getWindow(), isCovered);
-                    recommEdges.stream().filter(edge -> edge.getNumber() < 0.6 * CROWD_WORKER_NUMBER);
-
-                    //该用户还没验证过
-                    for (Edge e : recommEdges) {
-                        if (edge2UserDao.findByUserIdAndEdgeId(userId, e.getId()) == null) {
-                            EdgeVO edgeVO = edgeVOWrapper.wrap(e);
-                            edgeVO.setPath(path);
-                            resultEdges.add(edgeVO);
-                        }
-                    }
-
-                }
-            }
-
-            if (resultEdges.size() == 0 && resultEdges == null) {
-                List<Edge> edges = edgeDao.findByAppKeyAndDataType(appKey, isCovered);
-                for (Edge e : edges) {
-                    if (edge2UserDao.findByUserIdAndEdgeId(userId, e.getId()) == null) {
-                        EdgeVO edgeVO = edgeVOWrapper.wrap(e);
-                        edgeVO.setPath(e.getSourceNode() + "->" + e.getTargetNode());
-                        resultEdges.add(edgeVO);
-                    }
-                }
-            }
-            resultEdges.sort((x, y) -> Integer.compare(x.getNumber(), y.getNumber()));
-            if (resultEdges.size() > size) {
-                for (int i = 0; i < size; i++) {
-                    results.add(resultEdges.get(resultEdges.size() - 1 - i));
-                }
-            } else
-                results.addAll(resultEdges);
-
-            if (isCovered == 0&& resultEdges.size()<5){
-                List<EdgeVO> edges = edgeVOWrapper.wrap(edgeDao.findByAppKeyAndDataType(appKey, 0));
-                for (EdgeVO edgeVO: edges){
-                    edgeVO.setPath(edgeVO.getSourceNode()+"->"+edgeVO.getTargetNode());
-                }
-                results = edges;
-            }
-        }
-
-
-        return results;
+//
+//        GraphDTO graphDTO = new GraphDTO(nodeList, map, appKey);
+//
+//        List<List<Node>> recommNodes = new ArrayList<>();
+//        //寻找测试用例/普通跳转
+//        List<Edge> edgesContainsTC = edgeDao.findByAppKeyAndDataType(appKey, isCovered);
+//        List<Node> nodes = new ArrayList<>();
+//        for (Edge edge : edgesContainsTC) {
+//            Node node = nodeDao.findByWindow(edge.getTargetNode());
+//            if (nodes.stream().noneMatch(node1 -> node1.equals(node))) {
+//                nodes.add(node);
+//            }
+//        }
+//        //当前节点到目标节点的最短路径
+//        List<Edge> targetEdges =  edgeDao.findByAppKeyAndDataType(appKey, isCovered);
+//        List<String> destNodes = targetEdges.stream().map(edge -> edge.getSourceNode()).collect(Collectors.toList());
+//        for (String n: destNodes) {
+//            if (!n.equals(currentWindow)) {
+//                int startIndex = nodeList.indexOf(nodeDao.findByWindow(currentWindow));
+//                int destIndex = nodeList.indexOf(nodeDao.findByWindow(n));
+//                List<Node> pathNodes = dijkstraTravasal(startIndex, destIndex, graphDTO);
+//                //排除不可达节点
+//                if (pathNodes.size() != 1 || pathNodes.get(0).equals(currNode)) {
+//                    recommNodes.add(pathNodes);
+//                }
+//            }
+//
+//        }
+//
+//        List<EdgeVO> results = new ArrayList<>();
+//        List<EdgeVO> resultSelfEdges = new ArrayList<>();
+//        //先是当前页面自身到自身的边
+//        List<Edge> selfEdges = edgeDao.findBySourceNodeAndTargetNodeAndDataTypeOrderByNumber
+//                (currentWindow, currentWindow, isCovered);
+//        if (selfEdges != null && selfEdges.size() != 0) {
+//            for (Edge edge : selfEdges) {
+//                EdgeVO edgeVO = edgeVOWrapper.wrap(edge);
+//                edgeVO.setPath(currentWindow + "->" + currentWindow);
+//                if (edge2UserDao.findByUserIdAndEdgeId(userId, edge.getId()) == null)
+//                    resultSelfEdges.add(edgeVO);
+//            }
+//        }
+//        int selfSize = resultSelfEdges.size();
+//        int size = 5 - selfSize;
+//        resultSelfEdges.sort((x, y) -> Integer.compare(x.getNumber(), y.getNumber()));//这方法需要jdk1.8以上
+//        if (selfSize >= 5) {
+//            results.add(resultSelfEdges.get(selfSize - 1));
+//            results.add(resultSelfEdges.get(selfSize - 2));
+//            results.add(resultSelfEdges.get(selfSize - 3));
+//            results.add(resultSelfEdges.get(selfSize - 4));
+//            results.add(resultSelfEdges.get(selfSize - 5));
+//        } else {
+//            results.addAll(resultSelfEdges);
+//
+//            List<EdgeVO> resultEdges = new ArrayList<>();
+//            for (List<Node> nodePath : recommNodes) {
+//                StringBuilder temp = new StringBuilder();
+//                for (Node node : nodePath) {
+//                    temp.append(node.getWindow() + "->");
+//                }
+//                String path = temp.toString().substring(0, temp.length() - 3);
+//                //排除不可达节点
+//                if (nodePath.size() != 1 || nodePath.get(0).equals(currNode)) {
+//                    List<Edge> recommEdges;
+//                    Node sourceNode;
+//                    Node targetNode;
+//
+//                    //可达节点自身到自身的边
+//                    if (nodePath.size() == 1 && nodePath.get(0).equals(currNode)) {
+//                        sourceNode = currNode;
+//                        targetNode = currNode;
+//                    } else {
+//                        //正常情况
+//                        sourceNode = nodePath.get(nodePath.size() - 2);
+//                        targetNode = nodePath.get(nodePath.size() - 1);
+//                    }
+//                    recommEdges = edgeDao.findBySourceNodeAndTargetNodeAndDataTypeOrderByNumber(
+//                            sourceNode.getWindow(), targetNode.getWindow(), isCovered);
+//                    recommEdges.stream().filter(edge -> edge.getNumber() < 0.6 * CROWD_WORKER_NUMBER);
+//
+//                    //该用户还没验证过
+//                    for (Edge e : recommEdges) {
+//                        if (edge2UserDao.findByUserIdAndEdgeId(userId, e.getId()) == null) {
+//                            EdgeVO edgeVO = edgeVOWrapper.wrap(e);
+//                            edgeVO.setPath(path);
+//                            resultEdges.add(edgeVO);
+//                        }
+//                    }
+//
+//                }
+//            }
+//
+//            if (resultEdges.size() == 0 && resultEdges == null) {
+//                List<Edge> edges = edgeDao.findByAppKeyAndDataType(appKey, isCovered);
+//                for (Edge e : edges) {
+//                    if (edge2UserDao.findByUserIdAndEdgeId(userId, e.getId()) == null) {
+//                        EdgeVO edgeVO = edgeVOWrapper.wrap(e);
+//                        edgeVO.setPath(e.getSourceNode() + "->" + e.getTargetNode());
+//                        resultEdges.add(edgeVO);
+//                    }
+//                }
+//            }
+//            resultEdges.sort((x, y) -> Integer.compare(x.getNumber(), y.getNumber()));
+//            if (resultEdges.size() > size) {
+//                for (int i = 0; i < size; i++) {
+//                    results.add(resultEdges.get(resultEdges.size() - 1 - i));
+//                }
+//            } else
+//                results.addAll(resultEdges);
+//
+//            if (isCovered == 0&& resultEdges.size()<5){
+//                List<EdgeVO> edges = edgeVOWrapper.wrap(edgeDao.findByAppKeyAndDataType(appKey, 0));
+//                for (EdgeVO edgeVO: edges){
+//                    edgeVO.setPath(edgeVO.getSourceNode()+"->"+edgeVO.getTargetNode());
+//                }
+//                results = edges;
+//            }
+//        }
+//
+//
+//        return results;
     }
 
 
