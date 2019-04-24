@@ -3,6 +3,7 @@ package bughunter.bughunterserver.controller;
 import bughunter.bughunterserver.factory.ResultMessageFactory;
 import bughunter.bughunterserver.model.entity.BugInfo;
 import bughunter.bughunterserver.model.entity.BugInfoKeys;
+import bughunter.bughunterserver.model.entity.Edge;
 import bughunter.bughunterserver.service.BugService;
 import bughunter.bughunterserver.service.EdgeService;
 import bughunter.bughunterserver.until.Constants;
@@ -21,6 +22,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -235,6 +237,17 @@ public class BugController {
         return ResultMessageFactory.getResultMessage(messages);
     }
 
-
+    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    public
+    @ResponseBody
+    List<String> test(){
+        List<Edge> edges = edgeService.getEdgesByAppKey("JianDou");
+        List<String> results = new ArrayList<>();
+        for (Edge e: edges){
+            String s = e.getSourceNode() + " -> "+e.getTargetNode()+"[label = \""+e.getEventHandlers()+"\"]";
+            results.add(s);
+        }
+        return results;
+    }
 
 }
