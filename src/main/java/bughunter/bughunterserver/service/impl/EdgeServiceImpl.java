@@ -57,7 +57,13 @@ public class EdgeServiceImpl implements EdgeService {
     @Override
     public List<EdgeVO> getRecommBugs(String appKey, String currentWindow, Integer isCovered, Integer userId) {
         List<Edge> edges = edgeDao.findByAppKeyAndDataType(appKey, isCovered);
+        List<EdgeVO> edgeVOs = new ArrayList<>();
+        for(Edge e: edges){
+            EdgeVO edgeVO = edgeVOWrapper.wrap(e);
+            edgeVO.setPath(e.getSourceNode() + " ->" +e.getTargetNode());
+        }
         return edgeVOWrapper.wrap(edges);
+
 //        //当前用户所在节点
 //        Node currNode = nodeDao.findByWindow(currentWindow);
 //        HashMap<Node, List<Edge>> map = new HashMap<>();
