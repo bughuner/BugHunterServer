@@ -29,6 +29,7 @@ public class EdgeVOWrapper extends BaseWrapper<EdgeVO, Edge> {
         edgeVO.setAssistTime(edge.getAssistTime());
         edgeVO.setMessage(edge.getMessage());
         edgeVO.setImageUrl(edge.getImageUrl());
+        edgeVO.setPath(edge.getPath());
         return edgeVO;
     }
 

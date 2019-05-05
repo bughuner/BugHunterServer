@@ -235,4 +235,16 @@ public class EdgeController {
         }
 
     }
+
+
+    @RequestMapping(value = "/path/nextHint/{currentWindow}/{nextWindow}", method = RequestMethod.POST)
+    public
+    @ResponseBody
+    ResultMessage getNextEventHint(@PathVariable String currentWindow,
+                                 @PathVariable String nextWindow) {
+        String[] infos = currentWindow.split("\\.");
+        currentWindow = infos[infos.length - 1];
+        return ResultMessageFactory.getResultMessage(edgeService.getNextHint(currentWindow, nextWindow));
+    }
+
 }

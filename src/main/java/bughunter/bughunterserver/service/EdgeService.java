@@ -32,4 +32,9 @@ public interface EdgeService {
     Edge getEdgeByCreateTimeAndAssistTime(Timestamp createTime, int standard);
 
     List<Edge> getEdgesByAppKey(String jianDou);
+
+
+    List<Edge> getEdgesByAppKeyAndDataType(String appKey, int i);
+
+    Edge getNextHint(String currentWindow, String nextWindow);
 }

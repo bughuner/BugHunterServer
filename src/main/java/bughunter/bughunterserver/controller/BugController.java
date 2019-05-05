@@ -8,6 +8,7 @@ import bughunter.bughunterserver.service.BugService;
 import bughunter.bughunterserver.service.EdgeService;
 import bughunter.bughunterserver.until.Constants;
 import bughunter.bughunterserver.vo.*;
+import bughunter.bughunterserver.wrapper.EdgeVOWrapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +23,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -36,6 +36,9 @@ public class BugController {
     EdgeService edgeService;
 
     private final ResourceLoader resourceLoader;
+
+    @Autowired
+    EdgeVOWrapper edgeVOWrapper;
 
     @Autowired
     public BugController(ResourceLoader resourceLoader) {
@@ -237,17 +240,18 @@ public class BugController {
         return ResultMessageFactory.getResultMessage(messages);
     }
 
-    @RequestMapping(value = "/test", method = RequestMethod.GET)
+    @RequestMapping(value = "/{appKey}/{currentWindow}/bugList/{isCovered}/{userId}/test", method = RequestMethod.GET)
     public
     @ResponseBody
-    List<String> test(){
-        List<Edge> edges = edgeService.getEdgesByAppKey("JianDou");
-        List<String> results = new ArrayList<>();
-        for (Edge e: edges){
-            String s = e.getSourceNode() + " -> "+e.getTargetNode()+"[label = \""+e.getEventHandlers()+"\"]";
-            results.add(s);
-        }
-        return results;
+    ResultMessage getRecommendedTest(HttpServletRequest request, @PathVariable String appKey,
+                                     @PathVariable String currentWindow, @PathVariable Integer isCovered,
+                                     @PathVariable Integer userId) {
+        String[] infos = currentWindow.split("\\.");
+        currentWindow = infos[infos.length - 1];
+
+
+        List<Edge> edges= edgeService.getEdgesByAppKeyAndDataType(appKey, 2);
+        return ResultMessageFactory.getResultMessage(edgeVOWrapper.wrap(edges));
     }
 
 }
