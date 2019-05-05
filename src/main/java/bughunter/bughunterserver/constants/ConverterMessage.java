@@ -55,7 +55,7 @@ public class ConverterMessage {
             }
             return stringBuffer.toString();
         } else if (message.contains("contains")) {
-            StringBuffer stringBuffer = new StringBuffer(" click ");
+            StringBuffer stringBuffer = new StringBuffer("Click ");
             if (message.contains("ImageButton"))
                 stringBuffer.append(" image button ");
             if (message.contains("FrameLayout"))
@@ -66,7 +66,7 @@ public class ConverterMessage {
                 stringBuffer.append(" text view ");
 
             return stringBuffer.toString();
-        } else if (message.equals("click")) {
+        } else if (message.equals("Click")) {
             message = " uncovered path ";
         } else if (message.equals("implicit_back_event")){
             message = " press BACK button ";
