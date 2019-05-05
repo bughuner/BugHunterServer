@@ -8,72 +8,72 @@ public class ConverterMessage {
 
     public static String convertMessage(String message) {
         if (message.equals("Click Home button because has tried more than 3 times")) {
-            return "多次返回无响应,回到桌面";
+            return "Press HOME button";
         } else if (message.equals("Click Return button because this page has done")) {
-            return "页面结束,按返回键";
+            return "Press BACK button";
         } else if (message.contains("_") && !message.contains("implicit")) {
             String[] ms = message.split("\\/");
             String[] ms2 = ms[1].split("\\, ");
             message = ms2[0];
-            StringBuffer stringBuffer = new StringBuffer("点击");
+            StringBuffer stringBuffer = new StringBuffer("Click");
             if (message.split("\\_").length != 0) {
 
                 if (message.contains("_fab"))
-                    stringBuffer.append("悬浮按钮");
+                    stringBuffer.append(" floating button ");
                 else if (message.contains("card"))
-                    stringBuffer.append("物品收藏卡片");
+                    stringBuffer.append(" card for collection ");
                 String[] parts = message.split("\\_");
 
                 for (int i = 0; i < parts.length; i++) {
                     switch (parts[i]) {
                         case "toolbar":
-                            stringBuffer.append("顶部");
+                            stringBuffer.append(" top ");
                             break;
                         case "menu":
-                            stringBuffer.append("菜单");
+                            stringBuffer.append(" menu ");
                             break;
                         case "search":
-                            stringBuffer.append("搜索");
+                            stringBuffer.append(" search ");
                             break;
                         case "button":
-                            stringBuffer.append("按钮");
+                            stringBuffer.append(" button ");
                             break;
                         case "btn":
-                            stringBuffer.append("按钮");
+                            stringBuffer.append(" button ");
                             break;
                         case "close":
-                            stringBuffer.append("关闭");
+                            stringBuffer.append(" close ");
                             break;
                         case "tv":
-                            stringBuffer.append("文本框");
+                            stringBuffer.append(" textView ");
                             break;
                         case "edit":
-                            stringBuffer.append("编辑");
+                            stringBuffer.append(" edit ");
                     }
                 }
 
             }
             return stringBuffer.toString();
         } else if (message.contains("contains")) {
-            StringBuffer stringBuffer = new StringBuffer("请点击");
+            StringBuffer stringBuffer = new StringBuffer(" click ");
             if (message.contains("ImageButton"))
-                stringBuffer.append("图片按钮");
+                stringBuffer.append(" image button ");
             if (message.contains("FrameLayout"))
-                stringBuffer.append("帧布局");
+                stringBuffer.append(" frame layout ");
             if (message.contains("LinearLayoutCompat"))
-                stringBuffer.append("线性布局");
+                stringBuffer.append(" linear layout ");
             if (message.contains("TextView"))
-                stringBuffer.append("文本框");
+                stringBuffer.append(" text view ");
 
             return stringBuffer.toString();
         } else if (message.equals("click")) {
-            message = "尚待探索的页面";
+            message = " uncovered path ";
         } else if (message.equals("implicit_back_event")){
-            message = "返回按钮";
+            message = " press BACK button ";
         }else if (message.equals("implicit_power_event")){
-            message = "低电量模式测试";
+            message = " in low battery";
         }else if (message.equals("implicit_launch_event")){
-            message = "回到手机主页";
+            message = " press LAUNCHER button ";
         } else {
             return message;
         }
