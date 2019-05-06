@@ -250,8 +250,18 @@ public class BugController {
         currentWindow = infos[infos.length - 1];
 
 
-        List<Edge> edges= edgeService.getEdgesByAppKeyAndDataType(appKey, 2);
-        return ResultMessageFactory.getResultMessage(edgeVOWrapper.wrap(edges));
+        List<Edge> edges = edgeService.getEdgesByAppKeyAndDataType(appKey, isCovered);
+
+        if (isCovered == 0) {
+            List<EdgeVO> edgeVOs = edgeVOWrapper.wrap(edges);
+            for (EdgeVO edgeVO : edgeVOs) {
+                edgeVO.setPath("");
+            }
+            return ResultMessageFactory.getResultMessage(edgeVOs);
+        } else {
+            return ResultMessageFactory.getResultMessage(edgeVOWrapper.wrap(edges));
+        }
+
     }
 
 }

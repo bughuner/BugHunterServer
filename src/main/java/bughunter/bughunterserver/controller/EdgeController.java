@@ -237,7 +237,7 @@ public class EdgeController {
     }
 
 
-    @RequestMapping(value = "/path/nextHint/{currentWindow}/{nextWindow}", method = RequestMethod.POST)
+    @RequestMapping(value = "/path/nextHint/{currentWindow}/{nextWindow}", method = RequestMethod.GET)
     public
     @ResponseBody
     ResultMessage getNextEventHint(@PathVariable String currentWindow,
