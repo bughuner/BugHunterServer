@@ -3,7 +3,6 @@ package bughunter.bughunterserver.controller;
 import bughunter.bughunterserver.factory.ResultMessageFactory;
 import bughunter.bughunterserver.model.entity.BugInfo;
 import bughunter.bughunterserver.model.entity.BugInfoKeys;
-import bughunter.bughunterserver.model.entity.Edge;
 import bughunter.bughunterserver.service.BugService;
 import bughunter.bughunterserver.service.EdgeService;
 import bughunter.bughunterserver.until.Constants;
@@ -240,28 +239,5 @@ public class BugController {
         return ResultMessageFactory.getResultMessage(messages);
     }
 
-    @RequestMapping(value = "/{appKey}/{currentWindow}/bugList/{isCovered}/{userId}/test", method = RequestMethod.GET)
-    public
-    @ResponseBody
-    ResultMessage getRecommendedTest(HttpServletRequest request, @PathVariable String appKey,
-                                     @PathVariable String currentWindow, @PathVariable Integer isCovered,
-                                     @PathVariable Integer userId) {
-        String[] infos = currentWindow.split("\\.");
-        currentWindow = infos[infos.length - 1];
-
-
-        List<Edge> edges = edgeService.getEdgesByAppKeyAndDataType(appKey, isCovered);
-
-        if (isCovered == 0) {
-            List<EdgeVO> edgeVOs = edgeVOWrapper.wrap(edges);
-            for (EdgeVO edgeVO : edgeVOs) {
-                edgeVO.setPath("");
-            }
-            return ResultMessageFactory.getResultMessage(edgeVOs);
-        } else {
-            return ResultMessageFactory.getResultMessage(edgeVOWrapper.wrap(edges));
-        }
-
-    }
 
 }
