@@ -5,7 +5,7 @@ spring.jpa.show-sql = true
 logging.level.org.springframework.data=DEBUG
 logging.level.org.springframework.web=debug
 spring.jpa.hibernate.ddl-auto=update
-#create��ooooooo
+#create��
 #ÿ�μ���hibernateʱ����ɾ����һ�ε����ɵı�Ȼ��������model���������������±���������û���κθı�ҲҪ����ִ�У�����ǵ������ݿ�����ݶ�ʧ��һ����Ҫԭ��
 #create-drop ��
 #ÿ�μ���hibernateʱ����model�����ɱ�����sessionFactoryһ�ر�,����Զ�ɾ����
