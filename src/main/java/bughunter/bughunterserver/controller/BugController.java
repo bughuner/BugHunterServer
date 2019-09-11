@@ -11,6 +11,7 @@ import bughunter.bughunterserver.wrapper.EdgeVOWrapper;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.stereotype.Controller;
@@ -51,6 +52,12 @@ public class BugController {
 //        return ResultMessageFactory.getResultMessage(bugBaseInfoList);
 //    }
 
+    @RequestMapping(value="hello",method = RequestMethod.GET)
+    @ResponseBody
+    public String hello()
+    {
+        return "hello";
+    }
     @RequestMapping(value = "/{appKey}/{current}/getCurrentActivityBug", method = RequestMethod.GET)
     public
     @ResponseBody

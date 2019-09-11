@@ -49,6 +49,16 @@ public class Constants {
 
     public static final String MODIFY_TIME = "mTime";
 
+    //补充
+    public static final String EDGE_ID = "edge_id";
+
+    public static final String INFO_FLAG = "info_flag";
+
+    public static final Long EDGE_NO_EXIST = 0L;
+
+    public static final Integer INFO_FLAG_NO_EXIST = 0;
+
+
 
     public static final String ERROR_NO_EXIST = "no exist";
 

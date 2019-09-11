@@ -41,6 +41,15 @@ public class BugInfo {
             bugBaseInfo.setUserId(bugBaseInfoJSON.getInt(Constants.USER_ID));
         else
             bugBaseInfo.setUserId(Constants.USER_NO_EXIST_ID);
+        //这两个是后来添加的
+        if(bugBaseInfoJSON.has(Constants.EDGE_ID))
+            bugBaseInfo.setEdge_id(bugBaseInfoJSON.getLong(Constants.EDGE_ID));
+        else
+            bugBaseInfo.setEdge_id(Constants.EDGE_NO_EXIST);
+        if(bugBaseInfoJSON.has(Constants.INFO_FLAG))
+            bugBaseInfo.setInfo_flag(bugBaseInfoJSON.getInt(Constants.INFO_FLAG));
+        else
+            bugBaseInfo.setInfo_flag(Constants.INFO_FLAG_NO_EXIST);
 
         bugBaseInfo.setScreenshotAdr(screenshotAdr);
 //        int id=bugService.addBug(bugBaseInfo);

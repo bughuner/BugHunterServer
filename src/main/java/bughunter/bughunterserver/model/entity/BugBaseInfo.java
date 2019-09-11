@@ -35,6 +35,30 @@ public class BugBaseInfo {
     //截图，图片存储地址
     private String screenshotAdr;
 
+    //记录测试的edge_id
+    private Long edge_id;
+
+    public Long getEdge_id() {
+        return edge_id;
+    }
+
+    public void setEdge_id(Long edge_id) {
+        this.edge_id = edge_id;
+    }
+
+    public Integer getInfo_flag() {
+        return info_flag;
+    }
+
+    public void setInfo_flag(Integer info_flag) {
+        this.info_flag = info_flag;
+    }
+
+    //区分是通过复现bug提交的报告，还是自己在使用过程中遇到异常时提交的报告
+    private Integer info_flag;
+
+
+
     @Id
     public String getBugId() {
         return bugId;
