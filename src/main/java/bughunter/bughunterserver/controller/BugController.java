@@ -6,6 +6,7 @@ import bughunter.bughunterserver.model.entity.BugInfoKeys;
 import bughunter.bughunterserver.service.BugService;
 import bughunter.bughunterserver.service.EdgeService;
 import bughunter.bughunterserver.until.Constants;
+import bughunter.bughunterserver.until.PicName;
 import bughunter.bughunterserver.vo.*;
 import bughunter.bughunterserver.wrapper.EdgeVOWrapper;
 import org.json.JSONException;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -98,18 +100,21 @@ public class BugController {
     ResultMessage submitBug(@RequestParam(name = "screenshot", required = false) MultipartFile file, @RequestParam(name = "bug") String jsonStr) {
 
         String screenshotName = Constants.SCREENSHOT_NO_EXIST;
+        String picName = bughunter.bughunterserver.until.PicName.getPicName();
         if (file != null && !file.isEmpty()) {
             try {
                 File logoSaveFile = new File(Constants.SCREENSHOT_BASE_URL);
                 if (!logoSaveFile.exists()) {
                     logoSaveFile.mkdirs();
                 }
-                screenshotName = file.getOriginalFilename();
+//                screenshotName = file.getOriginalFilename();
+                screenshotName = picName;
 //                String suffix = file.getOriginalFilename().substring
 //                        (file.getOriginalFilename().lastIndexOf("."));
                 String screenshotFileName = Constants.SCREENSHOT_BASE_URL + File.separator + screenshotName;
                 File screenshotFile = new File(screenshotFileName);
                 file.transferTo(screenshotFile);
+
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 return new ResultMessage(1, e.getMessage());

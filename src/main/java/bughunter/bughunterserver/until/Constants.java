@@ -143,4 +143,6 @@ public class Constants {
     public static String SCREENSHOT_NO_EXIST = "no exist";
 
     public static String APP_VERSION = "appVersion";
+    //使报告时的bug_ID 和图片的文件名保持一致
+    public static String bug_id = "";
 }
