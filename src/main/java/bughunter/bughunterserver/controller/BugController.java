@@ -108,7 +108,7 @@ public class BugController {
                     logoSaveFile.mkdirs();
                 }
 //                screenshotName = file.getOriginalFilename();
-                screenshotName = picName;
+                screenshotName = picName+".png";
 //                String suffix = file.getOriginalFilename().substring
 //                        (file.getOriginalFilename().lastIndexOf("."));
                 String screenshotFileName = Constants.SCREENSHOT_BASE_URL + File.separator + screenshotName;
