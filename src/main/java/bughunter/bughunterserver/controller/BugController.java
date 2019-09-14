@@ -114,7 +114,7 @@ public class BugController {
                 String screenshotFileName = Constants.SCREENSHOT_BASE_URL + File.separator + screenshotName;
                 File screenshotFile = new File(screenshotFileName);
                 file.transferTo(screenshotFile);
-
+                System.out.println(screenshotFile.getAbsolutePath()+"----------------------------------");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
                 return new ResultMessage(1, e.getMessage());
