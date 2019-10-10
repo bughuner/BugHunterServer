@@ -60,6 +60,8 @@ public class BugController {
     {
         return "hello";
     }
+
+
     @RequestMapping(value = "/{appKey}/{current}/getCurrentActivityBug", method = RequestMethod.GET)
     public
     @ResponseBody
@@ -100,6 +102,7 @@ public class BugController {
     ResultMessage submitBug(@RequestParam(name = "screenshot", required = false) MultipartFile file, @RequestParam(name = "bug") String jsonStr) {
 
         String screenshotName = Constants.SCREENSHOT_NO_EXIST;
+        //获取图片的名字，同时把图片名赋值给Constant里的bug_id，供提交bugs时使用，确保bug_id和文件名的一致性
         String picName = bughunter.bughunterserver.until.PicName.getPicName();
         if (file != null && !file.isEmpty()) {
             try {
@@ -107,10 +110,7 @@ public class BugController {
                 if (!logoSaveFile.exists()) {
                     logoSaveFile.mkdirs();
                 }
-//                screenshotName = file.getOriginalFilename();
                 screenshotName = picName+".png";
-//                String suffix = file.getOriginalFilename().substring
-//                        (file.getOriginalFilename().lastIndexOf("."));
                 String screenshotFileName = Constants.SCREENSHOT_BASE_URL + File.separator + screenshotName;
                 File screenshotFile = new File(screenshotFileName);
                 file.transferTo(screenshotFile);

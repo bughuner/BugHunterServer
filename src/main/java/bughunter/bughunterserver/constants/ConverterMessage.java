@@ -11,7 +11,10 @@ public class ConverterMessage {
             return "Press HOME button";
         } else if (message.equals("Click Return button because this page has done")) {
             return "Press BACK button";
-        } else if (message.contains("_") && !message.contains("implicit")) {
+        }else if(message.equals(""))
+        {
+            return "";
+        }else if (message.contains("_") && !message.contains("implicit")) {
             String[] ms = message.split("\\/");
             String[] ms2 = ms[1].split("\\, ");
             message = ms2[0];
@@ -64,9 +67,8 @@ public class ConverterMessage {
                 stringBuffer.append(" linear layout ");
             if (message.contains("TextView"))
                 stringBuffer.append(" text view ");
-
             return stringBuffer.toString();
-        } else if (message.equals("Click")) {
+        } else if (message.equals("Click")||message.equals("click")) {
             message = " uncovered path ";
         } else if (message.equals("implicit_back_event")){
             message = " press BACK button ";

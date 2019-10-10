@@ -69,7 +69,6 @@ public class EdgeServiceImpl implements EdgeService {
         HashMap<Node, List<Edge>> map = new HashMap<>();
         //待测App所有覆盖边的目标节点
         List<Node> nodeList = nodeDao.findByAppKey(appKey);
-
         List<Edge> edgeList = new ArrayList<>();
         for (Node node : nodeList) {
             List<Edge> handledEdges = new ArrayList<>();
@@ -87,14 +86,15 @@ public class EdgeServiceImpl implements EdgeService {
 
                 }
             }
-            List<Edge> resuleEdge = new ArrayList<>();
+
+            List<Edge> resultEdge = new ArrayList<>();
             for (Edge e : handledEdges) {
                 if (edgeList.stream().noneMatch(edge -> edge.getTargetNode().equals(e.getSourceNode())
                         && edge.getSourceNode().equals(e.getTargetNode()))) {
-                    resuleEdge.add(e);
+                    resultEdge.add(e);
                 }
             }
-            map.put(node, resuleEdge);
+            map.put(node, resultEdge);
         }
 
         GraphDTO graphDTO = new GraphDTO(nodeList, map, appKey);
@@ -103,8 +103,13 @@ public class EdgeServiceImpl implements EdgeService {
         //寻找测试用例/普通跳转
         List<Edge> edgesContainsTC = edgeDao.findByAppKeyAndDataType(appKey, isCovered);
         List<Node> nodes = new ArrayList<>();
+        int z = 0;
         for (Edge edge : edgesContainsTC) {
             Node node = nodeDao.findByWindow(edge.getTargetNode());
+            if(node==null)
+            {
+                System.out.println(edge.getTargetNode());
+            }
             if (nodes.stream().noneMatch(node1 -> node1.equals(node))) {
                 nodes.add(node);
             }
@@ -149,7 +154,6 @@ public class EdgeServiceImpl implements EdgeService {
             results.add(resultSelfEdges.get(selfSize - 5));
         } else {
             results.addAll(resultSelfEdges);
-
             List<EdgeVO> resultEdges = new ArrayList<>();
             for (List<Node> nodePath : recommNodes) {
                 StringBuilder temp = new StringBuilder();
@@ -205,7 +209,6 @@ public class EdgeServiceImpl implements EdgeService {
                 }
             } else
                 results.addAll(resultEdges);
-
             if (isCovered == 0 && resultEdges.size() < 5) {
                 List<EdgeVO> edges = edgeVOWrapper.wrap(edgeDao.findByAppKeyAndDataType(appKey, 0));
                 for (EdgeVO edgeVO : edges) {
