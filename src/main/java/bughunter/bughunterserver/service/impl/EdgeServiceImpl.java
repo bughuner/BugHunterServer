@@ -5,6 +5,7 @@ import bughunter.bughunterserver.dao.Edge2UserDao;
 import bughunter.bughunterserver.dao.EdgeDao;
 import bughunter.bughunterserver.dao.NodeDao;
 import bughunter.bughunterserver.model.entity.Edge;
+import bughunter.bughunterserver.model.entity.Edge2User;
 import bughunter.bughunterserver.model.entity.Node;
 import bughunter.bughunterserver.service.EdgeService;
 import bughunter.bughunterserver.vo.EdgeVO;
@@ -13,10 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -53,6 +51,65 @@ public class EdgeServiceImpl implements EdgeService {
         edges.sort((x, y) -> Integer.compare(x.getNumber(), y.getNumber()));//这方法需要jdk1.8以上
         return edges.get(edges.size() - 1);
     }
+    //自己写一个推荐的东西进来看看
+    public EdgeVO getNextBugHint_2(String currentWindow, String nextWindow, Long edgeId) {
+        if(currentWindow.equals(nextWindow))
+        {
+            Edge edge = edgeDao.findById(edgeId);
+            return edgeVOWrapper.wrap(edge);
+        }else
+        {
+              List<Edge> edges = edgeDao.findBySourceNodeAndTargetNode(currentWindow,nextWindow);
+
+              Edge temp = new Edge();
+              Date max_date = new Date(1999-10-10);
+              for(Edge e:edges)
+              {
+                  if(!e.getCreateTime().before(max_date))
+                  {
+                      System.out.println(e+"-----------------------------");
+                    max_date = e.getCreateTime();
+                    temp = e;
+                  }
+              }
+            return edgeVOWrapper.wrap(temp);
+
+        }
+
+    }
+    //自己写一个试一试
+    public List<EdgeVO> getRecommBugs_2(String appKey, String currentWindow, Integer isCovered, Integer userId) {
+        List<Edge> edges = edgeDao.findByAppKeyAndDataType(appKey, isCovered);
+        List<EdgeVO> edgeVOs = new ArrayList<>();
+        int i = 0;
+        Set<List<String>> set = new HashSet<>();
+        for(Edge e: edges){
+            Edge2User byUserIdAndEdgeId = edge2UserDao.findByUserIdAndEdgeId(userId, e.getId());
+            if(byUserIdAndEdgeId==null) {
+
+                List<String> list = new ArrayList();
+                list.add(e.getTargetNode());
+                list.add(e.getSourceNode());
+                if(!set.contains(list))
+                {
+                    set.add(list);
+                    EdgeVO edgeVO = edgeVOWrapper.wrap(e);
+                    edgeVO.setPath(e.getSourceNode() + " -> " + e.getTargetNode());
+                    edgeVOs.add(edgeVO);
+                    i++;
+                    if(i>8)
+                    {
+                        break;
+                    }
+                }
+
+            }
+        }
+//        return edgeVOWrapper.wrap(edges);
+        return edgeVOs;
+    }
+
+
 
     @Override
     public List<EdgeVO> getRecommBugs(String appKey, String currentWindow, Integer isCovered, Integer userId) {
@@ -86,7 +143,6 @@ public class EdgeServiceImpl implements EdgeService {
 
                 }
             }
-
             List<Edge> resultEdge = new ArrayList<>();
             for (Edge e : handledEdges) {
                 if (edgeList.stream().noneMatch(edge -> edge.getTargetNode().equals(e.getSourceNode())
@@ -97,6 +153,10 @@ public class EdgeServiceImpl implements EdgeService {
             map.put(node, resultEdge);
         }
 
+        System.out.println("----------------------------------------------------------");
+        System.out.println(map);
+
+
         GraphDTO graphDTO = new GraphDTO(nodeList, map, appKey);
 
         List<List<Node>> recommNodes = new ArrayList<>();
@@ -106,10 +166,6 @@ public class EdgeServiceImpl implements EdgeService {
         int z = 0;
         for (Edge edge : edgesContainsTC) {
             Node node = nodeDao.findByWindow(edge.getTargetNode());
-            if(node==null)
-            {
-                System.out.println(edge.getTargetNode());
-            }
             if (nodes.stream().noneMatch(node1 -> node1.equals(node))) {
                 nodes.add(node);
             }

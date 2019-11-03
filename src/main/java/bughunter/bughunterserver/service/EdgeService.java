@@ -16,8 +16,12 @@ public interface EdgeService {
     Edge save(Edge edge);
 
     Edge getNextBugHint(String currentWindow, String nextWindow, Long edgeId);
+    //自己写推荐
+    EdgeVO getNextBugHint_2(String currentWindow, String nextWindow, Long edgeId);
 
     List<EdgeVO> getRecommBugs(String appKey, String currentWindow, Integer isCovered, Integer userId);
+    //自己写的
+    List<EdgeVO> getRecommBugs_2(String appKey, String currentWindow, Integer isCovered, Integer userId);
 
     List<Edge> getEdgeBySourceNodeAndTargetNode(String sourceNode, String targetNode);
 

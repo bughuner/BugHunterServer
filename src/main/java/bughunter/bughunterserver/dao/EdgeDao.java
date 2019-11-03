@@ -51,5 +51,7 @@ public interface EdgeDao extends CrudRepository<Edge, Long> {
 
     Edge findByCreateTimeAndAssistTime(Timestamp createTime, int standard);
 
+    Edge findById(long id);
+
     List<Edge> findBySourceNodeAndTargetNode(String currentWindow, String nextWindow);
 }

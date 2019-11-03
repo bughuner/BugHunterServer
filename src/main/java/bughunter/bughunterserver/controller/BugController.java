@@ -246,8 +246,7 @@ public class BugController {
                                      @PathVariable Integer userId) {
         String[] infos = currentWindow.split("\\.");
         currentWindow = infos[infos.length - 1];
-
-        List<EdgeVO> messages = edgeService.getRecommBugs(appKey, currentWindow, isCovered, userId);
+        List<EdgeVO> messages = edgeService.getRecommBugs_2(appKey, currentWindow, isCovered, userId);
         return ResultMessageFactory.getResultMessage(messages);
     }
 
