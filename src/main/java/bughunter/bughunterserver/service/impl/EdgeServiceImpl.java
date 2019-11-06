@@ -81,30 +81,58 @@ public class EdgeServiceImpl implements EdgeService {
     public List<EdgeVO> getRecommBugs_2(String appKey, String currentWindow, Integer isCovered, Integer userId) {
         List<Edge> edges = edgeDao.findByAppKeyAndDataType(appKey, isCovered);
         List<EdgeVO> edgeVOs = new ArrayList<>();
-        int i = 0;
-        Set<List<String>> set = new HashSet<>();
-        for(Edge e: edges){
-            Edge2User byUserIdAndEdgeId = edge2UserDao.findByUserIdAndEdgeId(userId, e.getId());
-            if(byUserIdAndEdgeId==null) {
 
-                List<String> list = new ArrayList();
-                list.add(e.getTargetNode());
-                list.add(e.getSourceNode());
-                if(!set.contains(list))
-                {
-                    set.add(list);
-                    EdgeVO edgeVO = edgeVOWrapper.wrap(e);
-                    edgeVO.setPath(e.getSourceNode() + " -> " + e.getTargetNode());
-                    edgeVOs.add(edgeVO);
-                    i++;
-                    if(i>8)
-                    {
-                        break;
+        if(isCovered==0)
+        {
+            int i = 0;
+            for(Edge e:edges)
+            {
+                Edge2User byUserIdAndEdgeId = edge2UserDao.findByUserIdAndEdgeId(userId, e.getId());
+                if(byUserIdAndEdgeId==null) {
+                    if(e.getSourceNode().equals(currentWindow)) {
+                        List<String> list = new ArrayList();
+                        list.add(e.getTargetNode());
+                        list.add(e.getSourceNode());
+                        EdgeVO edgeVO = edgeVOWrapper.wrap(e);
+                        edgeVO.setPath(e.getSourceNode() + " -> " + e.getTargetNode());
+                        edgeVOs.add(edgeVO);
+                        i++;
+                        if (i > 3) {
+                            break;
+                        }
                     }
                 }
+            }
 
+        }else {
+            int i = 0;
+            Set<List<String>> set = new HashSet<>();
+            for(Edge e: edges){
+                Edge2User byUserIdAndEdgeId = edge2UserDao.findByUserIdAndEdgeId(userId, e.getId());
+                if(byUserIdAndEdgeId==null) {
+
+                    List<String> list = new ArrayList();
+                    list.add(e.getTargetNode());
+                    list.add(e.getSourceNode());
+                    if(!set.contains(list))
+                    {
+                        set.add(list);
+                        EdgeVO edgeVO = edgeVOWrapper.wrap(e);
+                        edgeVO.setPath(e.getSourceNode() + " -> " + e.getTargetNode());
+                        edgeVOs.add(edgeVO);
+                        i++;
+                        if(i>5)
+                        {
+                            break;
+                        }
+                    }
+
+                }
             }
         }
+
+
+
 //        return edgeVOWrapper.wrap(edges);
         return edgeVOs;
     }
