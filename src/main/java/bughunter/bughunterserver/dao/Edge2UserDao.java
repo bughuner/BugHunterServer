@@ -13,4 +13,5 @@ import javax.transaction.Transactional;
 public interface Edge2UserDao extends CrudRepository<Edge2User, Long> {
 
     Edge2User findByUserIdAndEdgeId(Integer userId, Long id);
+
 }

@@ -51,6 +51,37 @@ public class EdgeServiceImpl implements EdgeService {
         edges.sort((x, y) -> Integer.compare(x.getNumber(), y.getNumber()));//这方法需要jdk1.8以上
         return edges.get(edges.size() - 1);
     }
+    //改进版，这样应该能够正常进行推荐了
+    public EdgeVO getNextBugHint_3(String currentWindow, String nextWindow, Long edgeId) {
+        Edge edge = edgeDao.findById(edgeId);
+        if(currentWindow.equals(nextWindow))
+        {
+            return edgeVOWrapper.wrap(edge);
+        }else
+        {
+            List<String> list = new ArrayList<String>();
+            list.add(nextWindow);
+            int i = 0;
+            while(i<list.size())
+            {
+                List<Edge> temp = edgeDao.findByTargetNode(list.get(i));
+                for(Edge e:temp)
+                {
+                    String temp_source = e.getSourceNode();
+                    if(temp_source.equals(currentWindow))
+                    {
+                        return edgeVOWrapper.wrap(e);
+                    }else
+                    {
+                        list.add(temp_source);
+                        i++;
+                    }
+                }
+            }
+            return edgeVOWrapper.wrap(edge);
+        }
+
+    }
     //自己写一个推荐的东西进来看看
     public EdgeVO getNextBugHint_2(String currentWindow, String nextWindow, Long edgeId) {
         if(currentWindow.equals(nextWindow))
@@ -60,7 +91,6 @@ public class EdgeServiceImpl implements EdgeService {
         }else
         {
               List<Edge> edges = edgeDao.findBySourceNodeAndTargetNode(currentWindow,nextWindow);
-
               Edge temp = new Edge();
               Date max_date = new Date(1999-10-10);
               for(Edge e:edges)
@@ -110,7 +140,6 @@ public class EdgeServiceImpl implements EdgeService {
             for(Edge e: edges){
                 Edge2User byUserIdAndEdgeId = edge2UserDao.findByUserIdAndEdgeId(userId, e.getId());
                 if(byUserIdAndEdgeId==null) {
-
                     List<String> list = new ArrayList();
                     list.add(e.getTargetNode());
                     list.add(e.getSourceNode());
@@ -123,6 +152,7 @@ public class EdgeServiceImpl implements EdgeService {
                         i++;
                         if(i>5)
                         {
+
                             break;
                         }
                     }
@@ -130,9 +160,6 @@ public class EdgeServiceImpl implements EdgeService {
                 }
             }
         }
-
-
-
 //        return edgeVOWrapper.wrap(edges);
         return edgeVOs;
     }

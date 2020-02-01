@@ -47,13 +47,6 @@ public class BugController {
         this.resourceLoader = resourceLoader;
     }
 
-//    @RequestMapping(value = "/{appKey}/{bugId}/getSimilarity", method = RequestMethod.POST)
-//    public @ResponseBody
-//    ResultMessage getSimilarBug(HttpServletRequest request, @PathVariable int appKey, @PathVariable int bugId, @RequestBody String jsonStr) {
-//        List<BugBaseInfoVO> bugBaseInfoList = bugService.findSimilarBugs(getBugInfoKeys(appKey, bugId));
-//        return ResultMessageFactory.getResultMessage(bugBaseInfoList);
-//    }
-
     @RequestMapping(value="hello",method = RequestMethod.GET)
     @ResponseBody
     public String hello()

@@ -159,7 +159,8 @@ public class EdgeController {
                                  @PathVariable Long edgeId) {
         String[] infos = currentWindow.split("\\.");
         currentWindow = infos[infos.length - 1];
-        return ResultMessageFactory.getResultMessage(edgeService.getNextBugHint_2(currentWindow, nextWindow, edgeId));
+        return ResultMessageFactory.getResultMessage(edgeService.getNextBugHint_3(currentWindow, nextWindow, edgeId));
+
     }
 
     @RequestMapping(value = "/edge/{edgeId}/{userId}", method = RequestMethod.GET)

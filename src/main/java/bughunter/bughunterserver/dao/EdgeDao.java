@@ -18,7 +18,7 @@ public interface EdgeDao extends CrudRepository<Edge, Long> {
 
     @Query("SELECT e FROM Edge e WHERE e.appKey = :appKey " +
             "AND e.dataType = :dataType " +
-            "ORDER BY e.number DESC")
+            "ORDER BY e.number*0.2+weight*0.8 DESC")
     List<Edge> findByAppKeyAndDataType(@Param("appKey") String appKey,
                                        @Param("dataType") Integer dateType);
 
@@ -28,6 +28,10 @@ public interface EdgeDao extends CrudRepository<Edge, Long> {
             "ORDER BY e.number DESC")
     List<Edge> findBySourceNodeAndTargetNodeOrderByNumber(@Param("sourceWindow") String sourceWindow,
                                                           @Param("targetWindow") String targetWindow);
+
+    //根据终点，找到起点，把所有的起点放进list中
+    @Query("SELECT e FROM Edge e WHERE e.targetNode = :targetWindow ")
+    List<Edge> findByTargetNode(@Param("targetWindow") String targetWindow);
 
     //    @Query("SELECT e FROM edge e WHERE e.sourceNode = :sourceNode and e.targetNode = :targetNode " +
 //            "and e.callbacks = :callbacks and e.appKey = :appKey")

@@ -2,6 +2,7 @@ package bughunter.bughunterserver.model.entity;
 
 import java.io.Serializable;
 
+
 public class AppMemberKeys implements Serializable {
 
     private String appKey;
