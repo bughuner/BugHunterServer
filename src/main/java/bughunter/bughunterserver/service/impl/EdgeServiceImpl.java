@@ -10,6 +10,7 @@ import bughunter.bughunterserver.model.entity.Node;
 import bughunter.bughunterserver.service.EdgeService;
 import bughunter.bughunterserver.vo.EdgeVO;
 import bughunter.bughunterserver.wrapper.EdgeVOWrapper;
+import ch.qos.logback.core.net.SyslogOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -77,6 +78,10 @@ public class EdgeServiceImpl implements EdgeService {
                         i++;
                     }
                 }
+                // 死循环了
+                if(i>100){
+                    break;
+                }
             }
             return edgeVOWrapper.wrap(edge);
         }
@@ -111,6 +116,7 @@ public class EdgeServiceImpl implements EdgeService {
     public List<EdgeVO> getRecommBugs_2(String appKey, String currentWindow, Integer isCovered, Integer userId) {
         List<Edge> edges = edgeDao.findByAppKeyAndDataType(appKey, isCovered);
         List<EdgeVO> edgeVOs = new ArrayList<>();
+        System.out.println("====================================="+edges);
 
         if(isCovered==0)
         {
@@ -150,11 +156,11 @@ public class EdgeServiceImpl implements EdgeService {
                         edgeVO.setPath(e.getSourceNode() + " -> " + e.getTargetNode());
                         edgeVOs.add(edgeVO);
                         i++;
-                        if(i>5)
-                        {
-
-                            break;
-                        }
+//                        if(i>5)
+//                        {
+//
+//                            break;
+//                        }
                     }
 
                 }
